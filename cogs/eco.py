@@ -1,8 +1,10 @@
 import discord
+from discord import file
 from discord.ext import commands, tasks
 import asyncio
 from utils import sqlt
 from datetime import datetime
+import random
 
 
 
@@ -12,7 +14,8 @@ class Eco(commands.Cog):
 
     @commands.command()
     async def bal(self, ctx):
-        pbal = await sqlt.checkbal(ctx.author)
+        tbal = await sqlt.checkbal(ctx.author)
+        pbal = round(tbal, 2)
         if not isinstance(pbal, bool):
             pos = await sqlt.balleader(ctx.author)
             if str(pos).endswith('1'):
@@ -30,7 +33,6 @@ class Eco(commands.Cog):
             now = datetime.now()
             embed.set_footer(text = f"{str(now.day) + '/' + str(now.month) + '  ' + str(now.hour) + ':' + str(now.minute)}", icon_url = 'https://media.discordapp.net/attachments/756537548180029481/846092160193396757/images.png')
             await ctx.send(embed = embed)
-            # await ctx.send(f"You have : {pbal} MDCT <:mdct:843999368095989770>")
         else:
             await sqlt.createbal(ctx.author)
             pbal = await sqlt.checkbal(ctx.author)
@@ -51,5 +53,65 @@ class Eco(commands.Cog):
             embed.set_footer(text = f"{str(now.day) + '/' + str(now.month) + '  ' + str(now.hour) + ':' + str(now.minute)}", icon_url = 'https://media.discordapp.net/attachments/756537548180029481/846092160193396757/images.png')
             await ctx.send(embed = embed)
 
+    @commands.command()
+    async def coinflip(self, ctx, v, m):
+        bank = await sqlt.getbankval()
+        t = float(v)
+        val = round(t, 2)
+        currentbal = await sqlt.checkbal(ctx.author)
+        if val > currentbal:
+            await ctx.send("You don't have enough MCT")
+        elif val > bank:
+            await ctx.send("The bank doesn't have enough money.")
+        else:
+            if val < 0.01:
+                await ctx.send("Please enter a minimum amount of 0.01")
+                return
+            result = random.choice([0, 1])
+            blue = open(file = 'files/blueg.gif', mode = 'rb')
+            red = open(file = 'files/redg.gif', mode = 'rb')
+            blued = discord.File(fp = blue)
+            redd = discord.File(fp = red)
+            if m.lower().startswith('b'):
+                if result == 1:
+                    await ctx.send(file = blued)
+                    await sqlt.removebank(val)
+                    await sqlt.addbal(ctx.author, val)
+                else:
+                    await ctx.send(file = redd)
+                    await sqlt.addbank(val)
+                    await sqlt.removebal(ctx.author, val)
+            elif m.lower().startswith('r'):
+                if result == 0:
+                    await ctx.send(file = redd)
+                    await sqlt.removebank(val)
+                    await sqlt.addbal(ctx.author, val)
+                else:
+                    await ctx.send(file = blued)
+                    await sqlt.addbank(val)
+                    await sqlt.removebal(ctx.author, val)
+            else:
+                await ctx.send("Please enter a valid bet choice. *Red / Blue*")
+            print(await sqlt.getbankval())
+    
+    @commands.command()
+    async def bank(self, ctx):
+        now = datetime.now()
+        embed = discord.Embed()
+        embed.set_author(name = f"{ctx.author.name + '#' + ctx.author.discriminator}", icon_url = f'{ctx.author.avatar_url}')
+        embed.add_field(name = '**Bank**', value = f"The bank has : <:mdct:843999368095989770> {round(await sqlt.getbankval(), 2)} MCT")
+        embed.set_footer(text = f"{str(now.day) + '/' + str(now.month) + '  ' + str(now.hour) + ':' + str(now.minute)}", icon_url = 'https://media.discordapp.net/attachments/756537548180029481/846092160193396757/images.png')
+        await ctx.send(embed = embed)
+
+    @commands.command()
+    async def leaderboard(self, ctx):
+        now = datetime.now()
+        embed = discord.Embed()
+        embed.set_author(name = f"{ctx.author.name + '#' + ctx.author.discriminator}", icon_url = f'{ctx.author.avatar_url}')
+        embed.set_footer(text = f"{str(now.day) + '/' + str(now.month) + '  ' + str(now.hour) + ':' + str(now.minute)}", icon_url = 'https://media.discordapp.net/attachments/756537548180029481/846092160193396757/images.png')
+        lead = await sqlt.lead()
+        for i in lead:
+            pass
+            
 def setup(bot):
     bot.add_cog(Eco(bot))

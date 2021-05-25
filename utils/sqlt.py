@@ -20,7 +20,11 @@ sqlr = """CREATE TABLE IF NOT EXISTS ROLES (
 
 sqlb = """CREATE TABLE IF NOT EXISTS BALANCE (
             memberID integer PRIMARY KEY,
-            balance int
+            balance float
+)"""
+
+sqlg = """CREATE TABLE IF NOT EXISTS BANK (
+            balance float
 )"""
 
 async def maket(guild, member): #updates the boolean value "brushed" to True of the given user 'member'
@@ -173,7 +177,71 @@ async def addbal(member, amount):
             for i in vals:
                 if i[0] == member.id:
                     old = i[1]
-                    new = old + amount
+                    tnew = old + amount
+                    new = round(tnew, 2)
                     await crs.execute(f"""UPDATE BALANCE SET balance = {new} WHERE memberID = {member.id}""")
                     await db.commit()
                     break
+
+async def removebal(member, amount):
+    async with aiosqlite.connect('db.db') as db:
+        await db.execute(sqlb)
+        async with db.cursor() as crs:
+            await crs.execute("""SELECT memberID, balance FROM BALANCE""")
+            vals = await crs.fetchall()  
+            for i in vals:
+                if i[0] == member.id:
+                    old = i[1]
+                    tnew = old - amount
+                    new = round(tnew, 2)
+                    await crs.execute(f"""UPDATE BALANCE SET balance = {new} WHERE memberID = {member.id}""")
+                    await db.commit()
+                    break
+
+async def addbank(amount):
+    async with aiosqlite.connect('db.db') as db:
+        await db.execute(sqlg)
+        async with db.cursor() as crs:
+            await crs.execute("""SELECT balance FROM BANK""")
+            vals = await crs.fetchall()  
+            for i in vals:
+                old = i[0]
+                tnew = old + amount
+                new = round(tnew, 2)
+                await crs.execute(f"""UPDATE BANK SET balance = {new}""")
+                await db.commit()
+                break
+
+async def removebank(amount):
+    async with aiosqlite.connect('db.db') as db:
+        await db.execute(sqlg)
+        async with db.cursor() as crs:
+            await crs.execute("""SELECT balance FROM BANK""")
+            vals = await crs.fetchall()  
+            for i in vals:
+                old = i[0]
+                tnew = old - amount
+                new = round(tnew, 2)
+                await crs.execute(f"""UPDATE BANK SET balance = {new}""")
+                await db.commit()
+                break
+
+async def getbankval():
+     async with aiosqlite.connect('db.db') as db:
+        await db.execute(sqlg)
+        async with db.cursor() as crs:
+            await crs.execute("""SELECT balance FROM BANK""")
+            vals = await crs.fetchall()  
+            for i in vals:
+                return i[0]
+
+async def lead():
+    async with aiosqlite.connect('db.db') as db:
+        await db.execute(sqlb)
+        async with db.cursor() as crs:
+            await crs.execute("""SELECT memberID, balance FROM BALANCE ORDER BY balance DESC""")
+            vals = await crs.fetchall()  
+            leaderlist = []
+            for i in vals:
+                leaderlist.append(i[0], i[1])
+            return leaderlist
