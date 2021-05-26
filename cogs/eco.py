@@ -80,7 +80,7 @@ class Eco(commands.Cog):
                 await ctx.send("Please enter a minimum amount of 0.01")
                 return
             async with aiohttp.ClientSession() as session:
-                async with session.get('https://www.random.org/integers/?num=1&min=1&max=100&col=1&base=10&format=plain&rnd=new') as response:
+                async with session.get('https://www.random.org/integers/?num=1&min=0&max=100&col=1&base=10&format=plain&rnd=new') as response:
                     r = await response.text()
             blue = open(file = 'files/blueg.gif', mode = 'rb')
             red = open(file = 'files/redg.gif', mode = 'rb')
@@ -96,7 +96,7 @@ class Eco(commands.Cog):
                     await sqlt.addbank(val)
                     await sqlt.removebal(ctx.author, val)
             elif m.lower().startswith('r'):
-                if int(r) < 49:
+                if int(r) <= 49:
                     await ctx.send(file = redd)
                     await sqlt.removebank(val)
                     await sqlt.addbal(ctx.author, val)
