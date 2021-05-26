@@ -60,7 +60,11 @@ class Eco(commands.Cog):
         await ctx.send(result)
     
     @commands.command(aliases = ['cf', 'flip'])
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def coinflip(self, ctx, v, m):
+        if isinstance(ctx.message.channel, discord.DMChannel):
+            await ctx.send("You can't use this in DM's")
+            return
         bank = await sqlt.getbankval()
         currentbal = await sqlt.checkbal(ctx.author)
         if v.lower() == 'all':
@@ -92,7 +96,7 @@ class Eco(commands.Cog):
                     await sqlt.addbank(val)
                     await sqlt.removebal(ctx.author, val)
             elif m.lower().startswith('r'):
-                if int(r) < 50:
+                if int(r) < 49:
                     await ctx.send(file = redd)
                     await sqlt.removebank(val)
                     await sqlt.addbal(ctx.author, val)
@@ -144,6 +148,13 @@ class Eco(commands.Cog):
         embed = discord.Embed()
         embed.set_author(name = 'Midnight Crew Shop', icon_url = 'https://cdn.discordapp.com/emojis/846067291589574666.png')
         await ctx.send(embed=embed)
+    
+    @commands.command()
+    @commands.cooldown(1, 5, commands.BucketType.user)
+    async def tip(self, ctx, member:discord.Member, am):
+        await sqlt.addbal(member, float(am))
+        await sqlt.removebal(ctx.author, float(am))
+        await ctx.send(f"Sent <:mdct:843999368095989770> **{am}** MCT to {member}")
             
 def setup(bot):
     bot.add_cog(Eco(bot))
