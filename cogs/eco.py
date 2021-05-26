@@ -54,6 +54,11 @@ class Eco(commands.Cog):
             await ctx.send(embed = embed)
 
     @commands.command()
+    async def rnd(self, ctx):
+        number = random.choice([0, 1])
+        await ctx.send(number)
+    
+    @commands.command(aliases = ['cf', 'flip'])
     async def coinflip(self, ctx, v, m):
         bank = await sqlt.getbankval()
         t = float(v)
@@ -103,15 +108,31 @@ class Eco(commands.Cog):
         embed.set_footer(text = f"{str(now.day) + '/' + str(now.month) + '  ' + str(now.hour) + ':' + str(now.minute)}", icon_url = 'https://media.discordapp.net/attachments/756537548180029481/846092160193396757/images.png')
         await ctx.send(embed = embed)
 
-    @commands.command()
+    @commands.command(aliases = ['lb', 'baltop'])
     async def leaderboard(self, ctx):
+        txt = ''
+        cnt = 1
+        ind = ''
         now = datetime.now()
         embed = discord.Embed()
         embed.set_author(name = f"{ctx.author.name + '#' + ctx.author.discriminator}", icon_url = f'{ctx.author.avatar_url}')
         embed.set_footer(text = f"{str(now.day) + '/' + str(now.month) + '  ' + str(now.hour) + ':' + str(now.minute)}", icon_url = 'https://media.discordapp.net/attachments/756537548180029481/846092160193396757/images.png')
         lead = await sqlt.lead()
         for i in lead:
-            pass
+            if str(cnt).endswith('1'):
+                ind = str(cnt) + 'st'
+            elif str(cnt).endswith('2'):
+                ind = str(cnt) + 'nd'
+            elif str(cnt).endswith('3'):
+                ind = str(cnt) + 'rd'
+            else:
+                ind = str(cnt) + 'th'
+            mbm = await ctx.guild.fetch_member(i[0])
+            bal = await sqlt.checkbal(mbm)
+            txt = txt + f'**{ind}**. {mbm.name}#{mbm.discriminator} | <:mdct:843999368095989770> **{round(bal, 2)}** MCT\n' 
+            cnt += 1
+        embed.add_field(name = '**Leaderboard.**', value = txt)
+        await ctx.send(embed=embed)
             
 def setup(bot):
     bot.add_cog(Eco(bot))

@@ -241,7 +241,4 @@ async def lead():
         async with db.cursor() as crs:
             await crs.execute("""SELECT memberID, balance FROM BALANCE ORDER BY balance DESC""")
             vals = await crs.fetchall()  
-            leaderlist = []
-            for i in vals:
-                leaderlist.append(i[0], i[1])
-            return leaderlist
+            return vals
