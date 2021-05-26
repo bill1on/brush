@@ -27,6 +27,12 @@ sqlg = """CREATE TABLE IF NOT EXISTS BANK (
             balance float
 )"""
 
+sqlt = """CREATE TABLE IF NOT EXISTS CRYPTO (
+            channelid integer,
+            guildid integer,
+            time float
+)"""
+
 async def maket(guild, member): #updates the boolean value "brushed" to True of the given user 'member'
     async with aiosqlite.connect('db.db') as db:
         await db.execute(sqldb)
@@ -242,3 +248,32 @@ async def lead():
             await crs.execute("""SELECT memberID, balance FROM BALANCE ORDER BY balance DESC""")
             vals = await crs.fetchall()  
             return vals
+
+async def createcchannel(channel):
+    async with aiosqlite.connect('db.db') as db:
+        await db.execute(sqlt)
+        async with db.cursor() as crs:
+            await crs.execute("""INSERT INTO CRYPTO (channelid, guildid) VALUES (:channelID, :guildID)""", {'channelID': channel.id, 'guildID': channel.guild.id})
+            await db.commit()
+
+async def updatetime(channel, time):
+    async with aiosqlite.connect('db.db') as db:
+        await db.execute(sqlt)
+        async with db.cursor() as crs:
+            await crs.execute("""SELECT channelid, guildid, time FROM CRYPTO""")
+            vals = await crs.fetchall()
+            for i in vals:
+                if channel.id == i[0] and channel.guild.id == i[1]:
+                    await crs.execute(f"""UPDATE CRYPTO SET time = {time} WHERE guildid = {channel.guild.id}""")
+                    await db.commit()
+                    break
+
+async def checktime(channel):
+     async with aiosqlite.connect('db.db') as db:
+        await db.execute(sqlt)
+        async with db.cursor() as crs:
+            await crs.execute("""SELECT channelid, time FROM CRYPTO""")
+            vals = await crs.fetchall()
+            for i in vals:
+                if i[0] == channel.id:
+                    return i[1]

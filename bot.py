@@ -5,7 +5,7 @@ from utils import sqlt
 
 intents = discord.Intents.all()
 client = commands.Bot(command_prefix= '.', intents = intents)
-extensions = ['cogs.tooth', 'cogs.eco']
+extensions = ['cogs.tooth', 'cogs.eco', 'cogs.crypto']
 
 @client.event
 async def on_ready():
