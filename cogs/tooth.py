@@ -53,6 +53,7 @@ class Tooth(commands.Cog):
         await asyncio.sleep((future-now).seconds) # we then sleep for the time between the current day and the deadline
 
     @commands.command()
+    @commands.guild_only()
     async def brush(self, ctx):
         if await sqlt.checkt(ctx.guild, ctx.author): # checks whether a user is in the database
             if not await sqlt.checkb(ctx.guild, ctx.author): # checks whether the user has brushed their teeth today already
@@ -80,6 +81,7 @@ class Tooth(commands.Cog):
             await ctx.send(embed = embed)
     
     @commands.command()
+    @commands.guild_only()
     async def join(self, ctx): #join function for joining the database
         fp = open(file= "./files/xqcmald.gif", mode= "rb")
         xqc = discord.File(fp)

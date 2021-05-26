@@ -60,11 +60,9 @@ class Eco(commands.Cog):
         await ctx.send(result)
     
     @commands.command(aliases = ['cf', 'flip'])
+    @commands.guild_only()
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def coinflip(self, ctx, v, m):
-        if isinstance(ctx.message.channel, discord.DMChannel):
-            await ctx.send("You can't use this in DM's")
-            return
         bank = await sqlt.getbankval()
         currentbal = await sqlt.checkbal(ctx.author)
         if v.lower() == 'all':
@@ -150,6 +148,7 @@ class Eco(commands.Cog):
         await ctx.send(embed=embed)
     
     @commands.command()
+    @commands.guild_only()
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def tip(self, ctx, member:discord.Member, am):
         await sqlt.addbal(member, float(am))
