@@ -5,8 +5,7 @@ import asyncio
 from utils import sqlt
 from datetime import datetime
 import random
-
-
+import aiohttp
 
 class Eco(commands.Cog):
     def __init__(self, bot):
@@ -55,15 +54,19 @@ class Eco(commands.Cog):
 
     @commands.command()
     async def rnd(self, ctx):
-        number = random.choice([0, 1])
-        await ctx.send(number)
+        async with aiohttp.ClientSession() as session:
+            async with session.get('https://www.random.org/integers/?num=1&min=1&max=100&col=1&base=10&format=plain&rnd=new') as response:
+                result = await response.text()
+        await ctx.send(result)
     
     @commands.command(aliases = ['cf', 'flip'])
     async def coinflip(self, ctx, v, m):
         bank = await sqlt.getbankval()
+        currentbal = await sqlt.checkbal(ctx.author)
+        if v.lower() == 'all':
+            v = currentbal
         t = float(v)
         val = round(t, 2)
-        currentbal = await sqlt.checkbal(ctx.author)
         if val > currentbal:
             await ctx.send("You don't have enough MCT")
         elif val > bank:
@@ -72,13 +75,15 @@ class Eco(commands.Cog):
             if val < 0.01:
                 await ctx.send("Please enter a minimum amount of 0.01")
                 return
-            result = random.choice([0, 1])
+            async with aiohttp.ClientSession() as session:
+                async with session.get('https://www.random.org/integers/?num=1&min=1&max=100&col=1&base=10&format=plain&rnd=new') as response:
+                    r = await response.text()
             blue = open(file = 'files/blueg.gif', mode = 'rb')
             red = open(file = 'files/redg.gif', mode = 'rb')
             blued = discord.File(fp = blue)
             redd = discord.File(fp = red)
             if m.lower().startswith('b'):
-                if result == 1:
+                if int(r) > 50:
                     await ctx.send(file = blued)
                     await sqlt.removebank(val)
                     await sqlt.addbal(ctx.author, val)
@@ -87,7 +92,7 @@ class Eco(commands.Cog):
                     await sqlt.addbank(val)
                     await sqlt.removebal(ctx.author, val)
             elif m.lower().startswith('r'):
-                if result == 0:
+                if int(r) < 50:
                     await ctx.send(file = redd)
                     await sqlt.removebank(val)
                     await sqlt.addbal(ctx.author, val)
@@ -132,6 +137,12 @@ class Eco(commands.Cog):
             txt = txt + f'**{ind}**. {mbm.name}#{mbm.discriminator} | <:mdct:843999368095989770> **{round(bal, 2)}** MCT\n' 
             cnt += 1
         embed.add_field(name = '**Leaderboard.**', value = txt)
+        await ctx.send(embed=embed)
+
+    @commands.command()
+    async def shop(self, ctx):
+        embed = discord.Embed()
+        embed.set_author(name = 'Midnight Crew Shop', icon_url = 'https://cdn.discordapp.com/emojis/846067291589574666.png')
         await ctx.send(embed=embed)
             
 def setup(bot):
