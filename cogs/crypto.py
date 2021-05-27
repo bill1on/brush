@@ -4,16 +4,11 @@ from discord.ext import commands, tasks
 import aiohttp
 from datetime import datetime
 import time
-<<<<<<< Updated upstream
 from utilsdb import sqlt
-=======
-from utils import sqlt
-import json
 
 MIN_VALUE = 5000000
 with open('API_KEY.txt', 'r') as f:
     API_KEY = f.read()
->>>>>>> Stashed changes
 
 @tasks.loop(minutes = 1)
 async def whaletrans(channel):
