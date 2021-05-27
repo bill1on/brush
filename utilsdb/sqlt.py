@@ -9,13 +9,13 @@ from cogs import crypto
 
 sqldb = """CREATE TABLE IF NOT EXISTS ACTIVE (
             memberID integer PRIMARY KEY,
-            guildID ,
+            guildID int,
             brushedt int
         )"""
 
 sqlr = """CREATE TABLE IF NOT EXISTS ROLES (
             memberID integer PRIMARY KEY,
-            guildID,
+            guildID int,
             rolelist TEXT
         )"""
 
@@ -91,8 +91,8 @@ async def checkt(guild, member): # checks whether a person is in the database
             await crs.execute("""SELECT memberID, guildID FROM ACTIVE""")
             vals = await crs.fetchall()  
             for i in vals:
-                if member.id == i[0]:
-                    if i[1] == guild.id:
+                if member.id == int(i[0]):
+                    if int(i[1]) == guild.id:
                         return True
         return False           
  
