@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands, tasks
-from utils import sqlt
+from utilsdb import sqlt
 import aioschedule as schedule
 from datetime import datetime, timedelta
 import asyncio
@@ -9,7 +9,7 @@ class Tooth(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.Cog.listener() 
+    @commands.Cog.listener()
     async def on_message(self, msg): # an on_message event listener
         if not msg.author.bot:
             if not isinstance(msg.channel, discord.channel.DMChannel): # if the message is not in dms
@@ -23,12 +23,12 @@ class Tooth(commands.Cog):
         if await sqlt.checkb(server, user): # checkb checks whether a person has brushed their teeth
             await sqlt.makef(server, user) #if they have, i will turn to false and a new day will start
         else:
-            brole = server.get_role(845716619992105001) 
+            brole = server.get_role(845716619992105001)
             roles = user.roles # list of roles
             rolelist = "" # role list
             for i in roles:
                 if not i.position == 0:
-                    rolelist = rolelist + str(i.id) +  ', '  # gets id for each role and makes it into a string 
+                    rolelist = rolelist + str(i.id) +  ', '  # gets id for each role and makes it into a string
             if not await sqlt.checkrole(server, user):
                 await sqlt.roleadd(server, user, rolelist) # adds them to the database
             for role in roles:
@@ -40,7 +40,7 @@ class Tooth(commands.Cog):
                 await user.edit(deafen = True, mute = True)
             except:
                 print('User is not in VC')
-            
+
     @lockt.before_loop
     async def before_lockt(self): # function that is executed before the loop
         hour = 6
@@ -86,7 +86,7 @@ class Tooth(commands.Cog):
             embed.set_footer(text = "Made by billion")
             embed.add_field(name= "Already joined but this message still shows up?", value = "Please ping a staff member to help you out.", inline = False)
             await ctx.send(embed = embed)
-    
+
     @commands.command()
     @commands.guild_only()
     async def join(self, ctx): #join function for joining the database

@@ -1,7 +1,7 @@
 import discord
 import asyncio
 from discord.ext import commands
-from utils import sqlt
+from utilsdb import sqlt
 
 intents = discord.Intents.all()
 client = commands.Bot(command_prefix= '.', intents = intents)

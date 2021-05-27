@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands, tasks
 import aiohttp
 import time
-from utils import sqlt
+from utilsdb import sqlt
 
 @tasks.loop(minutes = 1)
 async def whaletrans(channel):
@@ -19,7 +19,7 @@ async def whaletrans(channel):
 class Crypto(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-    
+
     @commands.command()
     async def csetup(self, ctx, channel:discord.TextChannel):
         await sqlt.createcchannel(channel)

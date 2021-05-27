@@ -2,7 +2,7 @@ import discord
 from discord import file
 from discord.ext import commands, tasks
 import asyncio
-from utils import sqlt
+from utilsdb import sqlt
 from datetime import datetime
 import random
 import aiohttp
@@ -58,7 +58,7 @@ class Eco(commands.Cog):
             async with session.get('https://www.random.org/integers/?num=1&min=1&max=100&col=1&base=10&format=plain&rnd=new') as response:
                 result = await response.text()
         await ctx.send(result)
-    
+
     @commands.command(aliases = ['cf', 'flip'])
     @commands.guild_only()
     @commands.cooldown(1, 5, commands.BucketType.user)
@@ -105,7 +105,7 @@ class Eco(commands.Cog):
             else:
                 await ctx.send("Please enter a valid bet choice. *Red / Blue*")
             print(await sqlt.getbankval())
-    
+
     @commands.command()
     async def bank(self, ctx):
         now = datetime.now()
@@ -141,7 +141,7 @@ class Eco(commands.Cog):
                 ind = str(cnt) + 'th'
             mbm = await ctx.guild.fetch_member(i[0])
             bal = await sqlt.checkbal(mbm)
-            txt = txt + f'**{ind}**. {mbm.name}#{mbm.discriminator} | <:mdct:843999368095989770> **{round(bal, 2)}** MCT\n' 
+            txt = txt + f'**{ind}**. {mbm.name}#{mbm.discriminator} | <:mdct:843999368095989770> **{round(bal, 2)}** MCT\n'
             cnt += 1
         embed.add_field(name = '**Leaderboard.**', value = txt)
         await ctx.send(embed=embed)
@@ -151,7 +151,7 @@ class Eco(commands.Cog):
         embed = discord.Embed()
         embed.set_author(name = 'Midnight Crew Shop', icon_url = 'https://cdn.discordapp.com/emojis/846067291589574666.png')
         await ctx.send(embed=embed)
-    
+
     @commands.command()
     @commands.guild_only()
     @commands.cooldown(1, 5, commands.BucketType.user)
@@ -159,6 +159,6 @@ class Eco(commands.Cog):
         await sqlt.addbal(member, float(am))
         await sqlt.removebal(ctx.author, float(am))
         await ctx.send(f"Sent <:mdct:843999368095989770> **{am}** MCT to {member}")
-            
+
 def setup(bot):
     bot.add_cog(Eco(bot))
