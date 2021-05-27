@@ -7,10 +7,13 @@ intents = discord.Intents.all()
 client = commands.Bot(command_prefix= '.', intents = intents)
 extensions = ['cogs.tooth', 'cogs.eco', 'cogs.crypto']
 
+ENABLE_CRYPTO = True
+
 @client.event
 async def on_ready():
     await sqlt.loopsql(client)
-    await sqlt.loopcrypto(client)
+    if ENABLE_CRYPTO:
+        await sqlt.loopcrypto(client)
     print('We have logged in as {0.user}'.format(client))
 
 if __name__ == '__main__':

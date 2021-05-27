@@ -6,9 +6,11 @@ from datetime import datetime
 import time
 from utilsdb import sqlt
 
+ENABLE_CRYPTO = True
 MIN_VALUE = 5000000
-with open('API_KEY.txt', 'r') as f:
-    API_KEY = f.read()
+if ENABLE_CRYPTO:
+    with open('API_KEY.txt', 'r') as f:
+        API_KEY = f.read()
 
 @tasks.loop(minutes = 1)
 async def whaletrans(channel):
@@ -17,6 +19,7 @@ async def whaletrans(channel):
     embed.set_thumbnail(url = 'https://pbs.twimg.com/profile_images/1132579647374417921/9ifIGXEQ_400x400.png')
     t = int(time.time())
     trn = await sqlt.checktime(channel)
+    print(t-trn)
     if trn == None or int(t-trn) >= 3600:
         await sqlt.updatetime(channel, t)
         return
