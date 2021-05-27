@@ -78,7 +78,7 @@ async def checkb(guild, member): #checks whether the boolean value "brushed" is 
             await crs.execute("""SELECT memberID, guildID, brushedt FROM ACTIVE""")
             vals = await crs.fetchall()
             for i in vals:
-                if member.id == i[0] and guild.id == i[1]:
+                if member.id == i[0] and guild.id == int(i[1]):
                     if i[2] == 0:
                         return False
                     elif i[2] == 1:
