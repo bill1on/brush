@@ -17,7 +17,6 @@ async def whaletrans(channel):
     embed.set_thumbnail(url = 'https://pbs.twimg.com/profile_images/1132579647374417921/9ifIGXEQ_400x400.png')
     t = int(time.time())
     trn = await sqlt.checktime(channel)
-    print(t-trn)
     if trn == None or int(t-trn) >= 3600:
         await sqlt.updatetime(channel, t)
         return

@@ -54,7 +54,7 @@ async def loopsql(bot): #loop which is run everytime the bot starts to make sure
             await crs.execute("""SELECT memberID, guildID FROM ACTIVE""")
             vals = await crs.fetchall()
             for i in vals:
-                server = bot.get_guild(i[1])
+                server = bot.get_guild(int(i[1]))
                 member = server.get_member(i[0])
                 tooth.Tooth(bot).lockt.start(member, server)
 

@@ -11,7 +11,8 @@
             "driver": "MySQL",
             "name": "Tooth",
             "database": "DB",
-            "username": "Billion"
+            "username": "Billion",
+            "python.terminal.activateEnvironment": false
         }
     ]
 }
