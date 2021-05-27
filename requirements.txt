@@ -1,0 +1,8 @@
+aiohttp==3.7.4.post0
+aioschedule==0.5.2
+aiosqlite==0.17.0
+asyncio==3.4.3
+Cogs==0.4.4
+DateTime==4.3
+discord.py==1.7.2
+utils==1.0.1
