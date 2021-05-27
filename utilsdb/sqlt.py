@@ -41,7 +41,7 @@ async def maket(guild, member): #updates the boolean value "brushed" to True of 
             await crs.execute("""SELECT memberID, guildID, brushedt FROM ACTIVE""")
             vals = await crs.fetchall()
             for i in vals:
-                if member.id == i[0] and guild.id == i[1]:
+                if member.id == i[0] and guild.id == int(i[1]):
                     val = 1
                     await crs.execute(f"""UPDATE ACTIVE SET brushedt = {val} WHERE memberID = {i[0]}""")
                     await db.commit()
