@@ -11,10 +11,11 @@ class Tooth(commands.Cog):
 
     @commands.Cog.listener() 
     async def on_message(self, msg): # an on_message event listener
-        if not isinstance(msg.channel, discord.channel.DMChannel): # if the message is not in dms
-            if msg.channel.name == 'brush': # and the channel name is brush
-                await asyncio.sleep(0.1)
-                await msg.delete() # delete the message after 0.1 seconds
+        if not msg.author.bot:
+            if not isinstance(msg.channel, discord.channel.DMChannel): # if the message is not in dms
+                if msg.channel.name == 'brush': # and the channel name is brush
+                    await asyncio.sleep(0.1)
+                    await msg.delete() # delete the message after 0.1 seconds
 
     @tasks.loop(hours=24) # A loop that loops every 24 hours
     async def lockt(self, user, server):
@@ -35,7 +36,10 @@ class Tooth(commands.Cog):
                     await user.remove_roles(role)
             print(f"Added {brole.name} to {user.name}")
             await user.add_roles(brole) # if the person hasn't brushed their teeth they will get the role (not seeing anything)
-            await user.edit(deafen = True, mute = True)
+            try:
+                await user.edit(deafen = True, mute = True)
+            except:
+                print('User is not in VC')
             
     @lockt.before_loop
     async def before_lockt(self): # function that is executed before the loop
@@ -71,7 +75,10 @@ class Tooth(commands.Cog):
                     brole = ctx.guild.get_role(845716619992105001)
                     await ctx.author.remove_roles(brole) # removes b role
                     await sqlt.deleterole(ctx.guild, ctx.author)
-                    await ctx.author.edit(deafen = False, mute = False)
+                    try:
+                        await ctx.author.edit(deafen = False, mute = False)
+                    except:
+                        print("Couldn't undeafen/unmute user.")
                     await sqlt.addbal(ctx.author, 1)
         else: # if not in database this is sent
             embed = discord.Embed()

@@ -30,7 +30,7 @@ sqlg = """CREATE TABLE IF NOT EXISTS BANK (
 sqlt = """CREATE TABLE IF NOT EXISTS CRYPTO (
             channelid integer,
             guildid integer,
-            time float
+            time integer
 )"""
 
 async def maket(guild, member): #updates the boolean value "brushed" to True of the given user 'member'

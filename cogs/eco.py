@@ -126,7 +126,12 @@ class Eco(commands.Cog):
         embed.set_footer(text = f"{str(now.day) + '/' + str(now.month) + '  ' + str(now.hour) + ':' + str(now.minute)}", icon_url = 'https://media.discordapp.net/attachments/756537548180029481/846092160193396757/images.png')
         lead = await sqlt.lead()
         for i in lead:
-            if str(cnt).endswith('1'):
+            if cnt == 1:
+                mbm = await ctx.guild.fetch_member(i[0])
+                role = ctx.guild.get_role(768927936535068692)
+                await mbm.add_roles(role)
+                ind = str(cnt) + 'st'
+            elif str(cnt).endswith('1'):
                 ind = str(cnt) + 'st'
             elif str(cnt).endswith('2'):
                 ind = str(cnt) + 'nd'

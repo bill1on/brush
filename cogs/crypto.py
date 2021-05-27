@@ -6,14 +6,14 @@ from utils import sqlt
 
 @tasks.loop(minutes = 1)
 async def whaletrans(channel):
-    t = time.time()
+    t = int(time.time())
     trn = await sqlt.checktime(channel)
     if trn == None:
         await sqlt.updatetime(channel, t)
         return
     else:
         async with aiohttp.ClientSession() as session:
-            async with session.get(f'https://api.whale-alert.io/v1/transactions?api_key=apikey&min_value=500000&start={round(trn, 0)}') as response:
+            async with session.get(f'https://api.whale-alert.io/v1/transactions?api_key=tuIT4Ag3o0Rd2BSMPZvYB5ByXlaIZzL2&min_value=500000&start={round(trn, 0)}') as response:
                 await channel.send(await response.text())
 
 class Crypto(commands.Cog):
