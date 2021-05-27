@@ -10,6 +10,7 @@ extensions = ['cogs.tooth', 'cogs.eco', 'cogs.crypto']
 @client.event
 async def on_ready():
     await sqlt.loopsql(client)
+    await sqlt.loopcrypto(client)
     print('We have logged in as {0.user}'.format(client))
 
 if __name__ == '__main__':

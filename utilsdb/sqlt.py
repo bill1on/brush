@@ -5,6 +5,7 @@ import aioschedule
 from datetime import datetime, timedelta
 import asyncio
 from cogs import tooth
+from cogs import crypto
 
 sqldb = """CREATE TABLE IF NOT EXISTS ACTIVE (
             memberID integer PRIMARY KEY,
@@ -274,6 +275,31 @@ async def checktime(channel):
         async with db.cursor() as crs:
             await crs.execute("""SELECT channelid, time FROM CRYPTO""")
             vals = await crs.fetchall()
-            for i in vals:
-                if i[0] == channel.id:
-                    return i[1]
+            if len(vals) == 0:
+                return False
+            else:
+                for i in vals:
+                    if i[0] == channel.id:
+                        return i[1]
+    
+async def loopcrypto(bot):
+    async with aiosqlite.connect('db.db') as db:
+        await db.execute(sqlt)
+        async with db.cursor() as crs:
+            await crs.execute("""SELECT channelid, guildid, time FROM CRYPTO""")
+            vals = await crs.fetchall()
+            if not len(vals) == 0:
+                for i in vals:
+                    channel = bot.get_channel(i[0])
+                    await crypto.whaletrans.start(channel)
+
+async def removecrypto(channel):
+    async with aiosqlite.connect('db.db') as db:
+        await db.execute(sqlt)
+        async with db.cursor() as crs:
+            await crs.execute("""SELECT channelid FROM CRYPTO""")
+            vals = await crs.fetchall()
+            await crs.execute(f"""DELETE FROM CRYPTO WHERE channelid = {channel.id}""")
+            await db.commit()
+            
+            
