@@ -5,4 +5,3 @@ asyncio==3.4.3
 Cogs==0.4.4
 DateTime==4.3
 discord.py==1.7.2
-utils==1.0.1
