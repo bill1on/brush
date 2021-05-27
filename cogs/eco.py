@@ -86,7 +86,7 @@ class Eco(commands.Cog):
                     await sqlt.removebank(val)
                     await sqlt.addbal(ctx.author, val)
                 else:
-                    await ctx.send(file = redd)
+                    await ctx.send('https://cdn.discordapp.com/attachments/695949677694156834/847557856944717834/redg.gif')
                     await sqlt.addbank(val)
                     await sqlt.removebal(ctx.author, val)
             elif m.lower().startswith('r'):
@@ -95,7 +95,7 @@ class Eco(commands.Cog):
                     await sqlt.removebank(val)
                     await sqlt.addbal(ctx.author, val)
                 else:
-                    await ctx.send(file = blued)
+                    await ctx.send('https://cdn.discordapp.com/attachments/695949677694156834/847557850598211634/blueg.gif')
                     await sqlt.addbank(val)
                     await sqlt.removebal(ctx.author, val)
             else:
