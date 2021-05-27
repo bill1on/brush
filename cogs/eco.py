@@ -61,7 +61,7 @@ class Eco(commands.Cog):
 
     @commands.command(aliases = ['cf', 'flip'])
     @commands.guild_only()
-    @commands.cooldown(1, 5, commands.BucketType.user)
+    @commands.cooldown(1, 2, commands.BucketType.user)
     async def coinflip(self, ctx, v, m):
         bank = await sqlt.getbankval()
         currentbal = await sqlt.checkbal(ctx.author)
@@ -82,8 +82,8 @@ class Eco(commands.Cog):
                     r = await response.text()
             blue = open(file = 'files/blueg.gif', mode = 'rb')
             red = open(file = 'files/redg.gif', mode = 'rb')
-            blued = discord.File(fp = blue)
-            redd = discord.File(fp = red)
+            blued = ctx.send('https://cdn.discordapp.com/attachments/695949677694156834/847557850598211634/blueg.gif')
+            redd = ctx.send('https://cdn.discordapp.com/attachments/695949677694156834/847557856944717834/redg.gif')
             if m.lower().startswith('b'):
                 if int(r) >= 51:
                     await ctx.send(file = blued)
