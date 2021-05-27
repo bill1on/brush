@@ -114,3 +114,4 @@ dmypy.json
 .pyre/
 token.txt
 db.db
+API_KEY.txt

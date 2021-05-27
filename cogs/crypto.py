@@ -8,7 +8,7 @@ from utilsdb import sqlt
 async def whaletrans(channel):
     t = int(time.time())
     trn = await sqlt.checktime(channel)
-    if trn == None:
+    if trn == None or int(t-trn) >= 3600:
         await sqlt.updatetime(channel, t)
         return
     else:
