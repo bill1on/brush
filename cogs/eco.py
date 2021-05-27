@@ -80,13 +80,9 @@ class Eco(commands.Cog):
             async with aiohttp.ClientSession() as session:
                 async with session.get('https://www.random.org/integers/?num=1&min=1&max=100&col=1&base=10&format=plain&rnd=new') as response:
                     r = await response.text()
-            blue = open(file = 'files/blueg.gif', mode = 'rb')
-            red = open(file = 'files/redg.gif', mode = 'rb')
-            blued = ctx.send('https://cdn.discordapp.com/attachments/695949677694156834/847557850598211634/blueg.gif')
-            redd = ctx.send('https://cdn.discordapp.com/attachments/695949677694156834/847557856944717834/redg.gif')
             if m.lower().startswith('b'):
                 if int(r) >= 51:
-                    await ctx.send(file = blued)
+                    await ctx.send('https://cdn.discordapp.com/attachments/695949677694156834/847557850598211634/blueg.gif')
                     await sqlt.removebank(val)
                     await sqlt.addbal(ctx.author, val)
                 else:
@@ -95,7 +91,7 @@ class Eco(commands.Cog):
                     await sqlt.removebal(ctx.author, val)
             elif m.lower().startswith('r'):
                 if int(r) <= 50:
-                    await ctx.send(file = redd)
+                    await ctx.send('https://cdn.discordapp.com/attachments/695949677694156834/847557856944717834/redg.gif')
                     await sqlt.removebank(val)
                     await sqlt.addbal(ctx.author, val)
                 else:
