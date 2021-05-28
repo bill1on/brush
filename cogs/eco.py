@@ -173,9 +173,9 @@ class Eco(commands.Cog):
                 await ctx.send("Can't list more than 2 items!")
             else:
                 value = ' '.join(value)
-                if len(name) > 20:
+                if len(name) >= 30:
                     await ctx.send("Overexceeded 20 characters for name")
-                elif len(value) > 50:
+                elif len(value) >= 100:
                     await ctx.send("Overexceeded 50 characters for value")
                 elif float(price) < 0.01:
                     await ctx.send("Invalid price (minimum 0.01)")
