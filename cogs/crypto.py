@@ -6,7 +6,7 @@ from datetime import datetime
 import time
 from utilsdb import sqlt
 
-ENABLE_CRYPTO = True
+ENABLE_CRYPTO = False
 MIN_VALUE = 5000000
 if ENABLE_CRYPTO:
     with open('API_KEY.txt', 'r') as f:
@@ -46,7 +46,7 @@ async def whaletrans(channel):
                         embed.set_footer(text = f'{datetime.utcfromtimestamp(int(trn)).strftime("%m-%d | %H:%M")}', icon_url = 'https://cdn.discordapp.com/avatars/695608937503916032/811f272fbeb62b75cc420149edc03018.png')
                         await channel.send(embed = embed)
                 await sqlt.updatetime(channel, t)
-                
+
 class Crypto(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -56,7 +56,7 @@ class Crypto(commands.Cog):
         await sqlt.createcchannel(channel)
         whaletrans.start(channel)
         await ctx.send("Success!")
-    
+
     @commands.command()
     async def cstop(self, ctx, channel:discord.TextChannel):
         if not await sqlt.checktime(channel):
