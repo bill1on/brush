@@ -78,22 +78,30 @@ class Eco(commands.Cog):
                 await ctx.send("Please enter a minimum amount of 0.01")
                 return
             async with aiohttp.ClientSession() as session:
-                async with session.get('https://www.random.org/integers/?num=1&min=1&max=100&col=1&base=10&format=plain&rnd=new') as response:
+                async with session.get('https://www.random.org/integers/?num=1&min=1&max=200&col=1&base=10&format=plain&rnd=new') as response:
                     r = await response.text()
             if m.lower().startswith('b'):
-                if int(r) >= 51:
+                if int(r) >= 102:
                     await ctx.send('https://cdn.discordapp.com/attachments/695949677694156834/847557850598211634/blueg.gif')
                     await sqlt.removebank(val)
                     await sqlt.addbal(ctx.author, val)
+                elif int(r) > 99:
+                    await ctx.send('GET GREENED ON')
+                    await sqlt.addbank(val)
+                    await sqlt.removebal(ctx.author, val)
                 else:
                     await ctx.send('https://cdn.discordapp.com/attachments/695949677694156834/847557856944717834/redg.gif')
                     await sqlt.addbank(val)
                     await sqlt.removebal(ctx.author, val)
             elif m.lower().startswith('r'):
-                if int(r) <= 50:
+                if int(r) <= 99:
                     await ctx.send('https://cdn.discordapp.com/attachments/695949677694156834/847557856944717834/redg.gif')
                     await sqlt.removebank(val)
                     await sqlt.addbal(ctx.author, val)
+                elif int(r) < 102:
+                    await ctx.send('GET GREENED ON')
+                    await sqlt.addbank(val)
+                    await sqlt.removebal(ctx.author, val)
                 else:
                     await ctx.send('https://cdn.discordapp.com/attachments/695949677694156834/847557850598211634/blueg.gif')
                     await sqlt.addbank(val)
