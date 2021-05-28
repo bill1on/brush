@@ -160,9 +160,12 @@ class Eco(commands.Cog):
     @commands.guild_only()
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def tip(self, ctx, member:discord.Member, am):
-        await sqlt.addbal(member, float(am))
-        await sqlt.removebal(ctx.author, float(am))
-        await ctx.send(f"Sent <:mdct:843999368095989770> **{am}** MCT to {member}")
+        if int(am) < 0.01:
+            await ctx.send("Please enter a valid amount (0.01 minimum)")
+        else:
+            await sqlt.addbal(member, float(am))
+            await sqlt.removebal(ctx.author, float(am))
+            await ctx.send(f"Sent <:mdct:843999368095989770> **{am}** MCT to {member}")
 
 def setup(bot):
     bot.add_cog(Eco(bot))
