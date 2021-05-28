@@ -13,15 +13,27 @@ class Kaiji(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    
+    
     @commands.command(aliases = ['er', 'cardrules', 'ecardr', 'erules', 'ecardinfo'])
     async def ecardrules(self, ctx):
+        how = """One game has multiple rounds.
+        The Emperor side starts off by placing his card down first face down,
+        the Slave side has to counter attack with the card of his choice.
+        If the Emperor side played a citizen and the Slave side also played a citizen,
+        it is a draw, both citizen cards are out of the round and it moves on to the next turn.
+        The round finishes when the Emperor side descides to play the emperor card,
+        if the Slave side guesses the Emperor side played the emperor then can then counter attack with the slave,
+        beating the emperor and winning the round,
+        however if they do not guess the Emperor side played the emperor and place a citizen instead they lose the round."""
+        
         embed = discord.Embed()
         embed.add_field(name = "Usage:", value = ".duel [opponent] [bet amount]", inline = False)
         embed.add_field(name = "What is Ecard?", value = "Ecard is a PvP card game from the based manga Kaiji.", inline = False)
         embed.set_footer(text = "Made by v999 :)")
         embed.add_field(name= "and?", value = "The Emperor has ultimate power to give money (ie. most powerful card). Citizens cannot disobey him because they want money (i.e. Citizen loses to Emperor). The Slave has nothing to lose and has no use of money, therefore the slave can defeat the Emperor (i.e. The Slave loses to the Citizen card but wins over the Emperor card).", inline = False)
         embed.add_field(name= "What's the setup?", value = "The game is played with one side having four Citizen cards and an Emperor card (Emperor side). The other side having four Citizen cards and a Slave card (Slave side).", inline = False)
-        embed.add_field(name= "How does the game go?", value = "One game has multiple rounds. The Emperor side starts off by placing his card down first face down, the Slave side has to counter attack with the card of his choice. If the Emperor side played a citizen and the Slave side also played a citizen, it is a draw, both citizen cards are out of the round and it moves on to the next turn. The round finishes when the Emperor side descides to play the emperor card, if the Slave side guesses the Emperor side played the emperor then can then counter attack with the slave, beating the emperor and winning the round, however if they do not guess the Emperor side played the emperor and place a citizen instead they lose the round.", inline = False)
+        embed.add_field(name= "How does the game go?", value = how, inline = False)
         embed.add_field(name= "How do rounds work?", value = "The Emperor side start the first round, then the Slave side for the second round, they keep switching who starts back and forth until the game is over. Within each round the Emperor and Slave place their cards down first back and forth.", inline = False)
         embed.add_field(name= "How does one win a game?", value = "The game has 8 total rounds. The odds of the Slave side winning for each round is mathematically 1/4. For the Slave side to win a game they need to win a total of 2 rounds. For the Emperor side to win they need to win a total of 8 rounds. Which ever side wins their required amount of rounds first wins the game.", inline = False)
         await ctx.send(embed = embed)
@@ -57,34 +69,34 @@ class Kaiji(commands.Cog):
                             if ctx.author==user:
                                 await ctx.send("You can't duel yourself!")
                             else:
-                                userx = ctx.author
+                                userx = user
                                 await userx.send(ctx.author.name + " just challenged you to a duel of Ecard for " + str(betr) + " MCT.")
                                 await userx.send("You have 60 seconds to accept.")
                                 await userx.send("For more information about Ecard do `.erules`")
                                 await ctx.send("<@" + str(user.id) + "> " + ctx.author.name + " is challenging you, check direct messages!")
-
                                 message = await userx.send("React with :white_check_mark: to accept or with :x: to decline.")
                                 emojis = ['\u2705', '\u274C']
                                 for emoji in emojis:
                                     await message.add_reaction(emoji)
                                 def check(reaction, user):
                                     return user == userx and str(reaction.emoji) in emojis
-#                                try:
                                 reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=check)
                                 brurr = 1
                                 if str(reaction.emoji) == '\u2705':
                                     await userx.send('Duel accepted!')
                                     await userx.send(ctx.author.name + ' is picking his preference between Emperor and Slave.')
                                     await ctx.author.send( str(user.name) + ' has accepted your duel request!')
-
                                     messageca = await ctx.author.send("React with :yellow_square: if you want to play Emperor or with :red_square: if you want to play Slave.")
                                     emojisca = ['\U0001F7E8', '\U0001F7E5']
                                     for emoji in emojisca:
                                         await messageca.add_reaction(emoji)
                                     def check(reaction, user):
-                                        return user == userx and str(reaction.emoji) in emojisca
-                                    reaction, user = await self.bot.wait_for('reaction_add', timeout=120.0, check=check)
-
+                                        return user == ctx.author and str(reaction.emoji) in emojisca
+                                   # try:
+                                    reaction, ctx.author = await self.bot.wait_for('reaction_add', timeout=10, check=check)
+                                    #except asyncio.TimeoutError:
+                                        #await ctx.author.send("You lost due to timeout.")
+                                        #return
                                     if str(reaction.emoji) == '\U0001F7E8':
                                         await ctx.author.send('You chose Emperor!')
                                         await ctx.author.send('Your opponent is picking whether or not he agrees. If he does not the Slave and Emperor will be randomized.')
@@ -106,8 +118,6 @@ class Kaiji(commands.Cog):
                                             selu = "12"
                                             plyrdet = (rood.choice(selu))
                                             plyr1 = float(plyrdet)
-
-
                                     else:
                                         await ctx.author.send('You chose Slave!')
                                         await ctx.author.send('Your opponent is picking whether or not he agrees. If he does not the Slave and Emperor will be randomized.')
@@ -129,8 +139,6 @@ class Kaiji(commands.Cog):
                                             selu = "12"
                                             plyrdet = (rood.choice(selu))
                                             plyr1 = float(plyrdet)
-
-
                                     if plyr1 == 1:
                                         await ctx.author.send('iffed')
                                         await ctx.author.send(plyr1)
@@ -141,14 +149,13 @@ class Kaiji(commands.Cog):
                                         await ctx.author.send(plyr1)
                                         king = userx
                                         slave = ctx.author
-
                                     await king.send('Here is your deck. Use :blue_square: for Citizen and :yellow_square: for Emperor.')
-                                    messageca = await ctx.author.send("https://cdn.discordapp.com/attachments/847576142290354236/847578461312385054/emp5.jpg")
+                                    messageca = await king.send("https://cdn.discordapp.com/attachments/847576142290354236/847578461312385054/emp5.jpg")
                                     emojisca = ['\U0001F7E6', '\U0001F7E8']
                                     for emoji in emojisca:
                                         await messageca.add_reaction(emoji)
                                     def check(reaction, user):
-                                        return user == userx and str(reaction.emoji) in emojisca
+                                        return user == king and str(reaction.emoji) in emojisca
                                     reaction, user = await self.bot.wait_for('reaction_add', timeout=120.0, check=check)
 
                                     if str(reaction.emoji) == '\U0001F7E8':
