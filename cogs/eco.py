@@ -85,7 +85,7 @@ class Eco(commands.Cog):
                     await ctx.send('https://cdn.discordapp.com/attachments/695949677694156834/847557850598211634/blueg.gif')
                     await sqlt.removebank(val)
                     await sqlt.addbal(ctx.author, val)
-                elif int(r) > 99:
+                elif int(r) == 100 or int(r) == 101:
                     await ctx.send('GET GREENED ON')
                     await sqlt.addbank(val)
                     await sqlt.removebal(ctx.author, val)
@@ -98,7 +98,7 @@ class Eco(commands.Cog):
                     await ctx.send('https://cdn.discordapp.com/attachments/695949677694156834/847557856944717834/redg.gif')
                     await sqlt.removebank(val)
                     await sqlt.addbal(ctx.author, val)
-                elif int(r) < 102:
+                elif int(r) == 100 or int(r) == 101:
                     await ctx.send('GET GREENED ON')
                     await sqlt.addbank(val)
                     await sqlt.removebal(ctx.author, val)
@@ -152,9 +152,71 @@ class Eco(commands.Cog):
 
     @commands.command()
     async def shop(self, ctx):
-        embed = discord.Embed()
+        embed = discord.Embed(description = "**__Rules:__**\n-Scamming | refund for buyer and ban from using bot for seller\n-Maximum 2 listings per person\n**__Usage:__**\n`.buy *name of item*` | `.sell *name* *value* *description*`\n\n**SHOP:**", color = 1048464)
         embed.set_author(name = 'Midnight Crew Shop', icon_url = 'https://cdn.discordapp.com/emojis/846067291589574666.png')
+        embed.set_thumbnail(url = "https://media.discordapp.net/attachments/836912159573147649/847872413081141308/rffcgddd.png?width=504&height=640")
+        if not await sqlt.checkshop(ctx.guild):
+            embed.add_field(name = "Oops!", value = "Seems like there's nothing in the shop! <:sadge:836984964729274410>")
+        else:
+            shoplisting = await sqlt.getshop(ctx.guild)
+            print(shoplisting)
+            for i in shoplisting:
+                member = ctx.guild.get_member(i[0])
+                embed.add_field(name = f"{i[1]} for <:mdct:843999368095989770> **{i[3]}** MCT", value = f"{i[2]}\nSeller: __{member.name}#{member.discriminator}__", inline= False)
         await ctx.send(embed=embed)
+
+    @commands.command()
+    async def sell(self, ctx, name, price, *value):
+        price = round(float(price), 2)
+        if not isinstance(await sqlt.checkbal(ctx.author), bool):
+            if await sqlt.listingpermember(ctx.author) >= 2:
+                await ctx.send("Can't list more than 2 items!")
+            else:
+                value = ' '.join(value)
+                if len(name) > 20:
+                    await ctx.send("Overexceeded 20 characters for name")
+                elif len(value) > 50:
+                    await ctx.send("Overexceeded 50 characters for value")
+                elif float(price) < 0.01:
+                    await ctx.send("Invalid price (minimum 0.01)")
+                else:
+                    slist = await sqlt.checkshopname(name)
+                    for i in slist:
+                        if name in i:
+                            await ctx.send("Name is already used!")
+                            return
+                    await sqlt.auctionshop(ctx.author, ctx.guild, name, value, price)
+                    await ctx.send(f"Sucessfully added {name} to shop for <:mdct:843999368095989770> **{price}** MCT")
+        else:
+            await ctx.send("You haven't joined yet! Please use .join to start participating!")
+
+    @commands.command()
+    async def buy(self, ctx, name):
+        items = await sqlt.checkshopname(name)
+        if items[0][4] > await sqlt.checkbal(ctx.author):
+            await ctx.send("Not enough money")
+            return
+        elif items[0][0] == ctx.author.id:
+            await ctx.send("Can't buy your own product.")
+            return
+        items = items[0]
+        await sqlt.removebal(ctx.author, float(items[4]))
+        await ctx.send(f"Sucessfully bought {name} for <:mdct:843999368095989770> **{items[4]}** MCT")
+        seller = ctx.guild.get_member(items[0])
+        await sqlt.addbal(seller, float(items[4]))
+        await seller.send(f"Someone has bought {name}! You've received <:mdct:843999368095989770> **{items[4]}** MCT")
+        await sqlt.removeshop(items)
+
+    @commands.command()
+    async def remove(self, ctx, name):
+        items = await sqlt.checkshopname(name)
+        if ctx.author.id == items[0][0]:
+            await sqlt.removeshop(items[0])
+        else:
+            if ctx.author.guild_permissions.administrator:
+                await sqlt.removeshop(items[0])
+            else:
+                await ctx.send("You don't have permissions to remove someone else's item.")
 
     @commands.command()
     @commands.guild_only()

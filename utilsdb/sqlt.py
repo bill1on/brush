@@ -34,6 +34,14 @@ sqlt = """CREATE TABLE IF NOT EXISTS CRYPTO (
             time integer
 )"""
 
+sqls = """CREATE TABLE IF NOT EXISTS SHOP (
+            memberid integer,
+            guildid integer,
+            name,
+            value,
+            price
+)"""
+
 async def maket(guild, member): #updates the boolean value "brushed" to True of the given user 'member'
     async with aiosqlite.connect('db.db') as db:
         await db.execute(sqldb)
@@ -302,4 +310,64 @@ async def removecrypto(channel):
             await crs.execute(f"""DELETE FROM CRYPTO WHERE channelid = {channel.id}""")
             await db.commit()
             
+async def checkshop(guild):
+    async with aiosqlite.connect('db.db') as db:
+        await db.execute(sqls)
+        async with db.cursor() as crs:
+            await crs.execute("""SELECT guildid FROM SHOP""")
+            vals = await crs.fetchall()
+            for i in vals:
+                if i[0] == guild.id:
+                    return True
+            return False
             
+async def auctionshop(member, guild, name, value, price):
+    async with aiosqlite.connect('db.db') as db:
+        await db.execute(sqls)
+        async with db.cursor() as crs:
+             await crs.execute("""INSERT INTO SHOP (memberid, guildid, name, value, price) VALUES (:memberID, :guildID, :name, :value, :price)""", {'memberID': member.id, 'guildID': guild.id, 'name': name, 'value': value, 'price': price})
+             await db.commit()
+
+async def getshop(guild):
+    async with aiosqlite.connect('db.db') as db:
+        await db.execute(sqls)
+        async with db.cursor() as crs:
+            rlist = []
+            await crs.execute("""SELECT memberid, guildid, name, value, price FROM SHOP""")
+            vals = await crs.fetchall()
+            for i in vals:
+                if i[1] == guild.id:
+                    alist = [i[0], i[2], i[3], i[4]]
+                    rlist.append(alist)
+            return rlist
+
+async def listingpermember(member):
+    async with aiosqlite.connect('db.db') as db:
+        c = 0
+        await db.execute(sqls)
+        async with db.cursor() as crs:
+            await crs.execute("""SELECT memberid FROM SHOP""")
+            vals = await crs.fetchall()
+            for i in vals:
+                if i[0] == member.id:
+                    c += 1
+            return c
+
+async def checkshopname(name):
+    async with aiosqlite.connect('db.db') as db:
+        ilist = []
+        await db.execute(sqls)
+        async with db.cursor() as crs:
+            await crs.execute("""SELECT memberid, guildid, name, value, price FROM SHOP""")
+            vals = await crs.fetchall()
+            for i in vals:
+                if i[2] == name:
+                    ilist.append(i)
+            return ilist
+
+async def removeshop(list):
+    async with aiosqlite.connect('db.db') as db:
+        await db.execute(sqls)
+        async with db.cursor() as crs:
+            await crs.execute(f"""DELETE FROM SHOP WHERE name = '{list[2]}' AND memberid = {list[0]}""")
+            await db.commit()

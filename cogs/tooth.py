@@ -62,7 +62,7 @@ class Tooth(commands.Cog):
         if await sqlt.checkt(ctx.guild, ctx.author): # checks whether a user is in the database
             if not await sqlt.checkb(ctx.guild, ctx.author): # checks whether the user has brushed their teeth today already
                 await sqlt.maket(ctx.guild, ctx.author) # we then turn it to true because they said they did brush their teeth now
-                await ctx.author.send('You brushed your teeth, nice job!')
+                await ctx.send('You brushed your teeth, nice job!')
                 roles = await sqlt.roleget(ctx.guild, ctx.author) # gets original roles from db
                 if roles == None:
                     await sqlt.addbal(ctx.author, 1)
