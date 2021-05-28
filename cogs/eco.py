@@ -152,7 +152,7 @@ class Eco(commands.Cog):
 
     @commands.command()
     async def shop(self, ctx):
-        embed = discord.Embed(description = "**__Rules:__**\n-Scamming | refund for buyer and ban from using bot for seller\n-Maximum 2 listings per person\n**__Usage:__**\n`.buy *name of item*` | `.sell *name* *value* *description*`\n\n**SHOP:**", color = 1048464)
+        embed = discord.Embed(description = "**__Rules:__**\n-Scamming | refund for buyer and ban from using bot for seller\n-Trying to create loopholes is forbidden\n-Maximum 2 listings per person\n**__Usage:__**\n`.buy *name of item*` | `.sell *name* *value* *description*`\n\n**SHOP:**", color = 1048464)
         embed.set_author(name = 'Midnight Crew Shop', icon_url = 'https://cdn.discordapp.com/emojis/846067291589574666.png')
         embed.set_thumbnail(url = "https://media.discordapp.net/attachments/836912159573147649/847872413081141308/rffcgddd.png?width=504&height=640")
         if not await sqlt.checkshop(ctx.guild):
