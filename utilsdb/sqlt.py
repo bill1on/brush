@@ -1,9 +1,6 @@
 import aiosqlite
-import discord
 from discord.ext import commands, tasks
-import aioschedule
 from datetime import datetime, timedelta
-import asyncio
 from cogs import tooth
 from cogs import crypto
 

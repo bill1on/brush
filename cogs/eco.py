@@ -1,10 +1,8 @@
 import discord
 from discord import file
 from discord.ext import commands, tasks
-import asyncio
 from utilsdb import sqlt
 from datetime import datetime
-import random
 import aiohttp
 
 class Eco(commands.Cog):

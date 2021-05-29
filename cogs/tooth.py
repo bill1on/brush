@@ -1,7 +1,6 @@
 import discord
 from discord.ext import commands, tasks
 from utilsdb import sqlt
-import aioschedule as schedule
 from datetime import datetime, timedelta
 import asyncio
 
