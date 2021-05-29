@@ -81,7 +81,7 @@ class Kaiji(commands.Cog):
                                 def check(reaction, user):
                                     return user == userx and str(reaction.emoji) in emojis
                                 try:
-                                reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=check)
+                                    reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=check)
                                 except asyncio.TimeoutError:
                                     await ctx.author.send("Your opponent didn't accept/decline in time.")
                                     await userx.send("Invitation timed out.")
@@ -98,7 +98,7 @@ class Kaiji(commands.Cog):
                                     def check(reaction, user):
                                         return user == ctx.author and str(reaction.emoji) in emojisca
                                     try:
-                                    reaction, ctx.author = await self.bot.wait_for('reaction_add', timeout=60, check=check)
+                                        reaction, ctx.author = await self.bot.wait_for('reaction_add', timeout=60, check=check)
                                     except asyncio.TimeoutError:
                                         await ctx.author.send("You took too long to choose.")
                                         await userx.send("Your opponent took too long to choose.")
@@ -113,7 +113,7 @@ class Kaiji(commands.Cog):
                                         def check(reaction, user):
                                             return user == userx and str(reaction.emoji) in emojis
                                         try:
-                                        reaction, user = await self.bot.wait_for('reaction_add', timeout=120.0, check=check)
+                                            reaction, user = await self.bot.wait_for('reaction_add', timeout=120.0, check=check)
                                         except asyncio.TimeoutError:
                                             await ctx.author.send("Your opponent took too long to choose.")
                                             await userx.send("You took too long to choose.")
@@ -140,7 +140,7 @@ class Kaiji(commands.Cog):
                                             return user == userx and str(reaction.emoji) in emojis
                                         
                                         try:
-                                        reaction, user = await self.bot.wait_for('reaction_add', timeout=120.0, check=check)
+                                            reaction, user = await self.bot.wait_for('reaction_add', timeout=120.0, check=check)
                                         except asyncio.TimeoutError:
                                             await ctx.author.send("Your opponent took too long to choose.")
                                             await userx.send("You took too long to choose.")
