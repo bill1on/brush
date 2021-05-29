@@ -55,7 +55,7 @@ class Eco(commands.Cog):
     @commands.command()
     async def rnd(self, ctx):
         async with aiohttp.ClientSession() as session:
-            async with session.get('https://www.random.org/integers/?num=1&min=1&max=100&col=1&base=10&format=plain&rnd=new') as response:
+            async with session.get('https://www.random.org/integers/?num=1&min=1&max=200&col=1&base=10&format=plain&rnd=new') as response:
                 result = await response.text()
         await ctx.send(result)
 
@@ -152,7 +152,14 @@ class Eco(commands.Cog):
 
     @commands.command()
     async def shop(self, ctx):
-        embed = discord.Embed(description = "**__Rules:__**\n-Scamming | refund for buyer and ban from using bot for seller\n-Trying to create loopholes is forbidden\n-Maximum 2 listings per person\n**__Usage:__**\n`.buy *name of item*` | `.sell *name* *value* *description*`\n\n**SHOP:**", color = 1048464)
+        desc = """**__Rules:__**\n
+        -Scamming | refund for buyer and ban from using bot for seller\n
+        -Trying to create loopholes is forbidden\n
+        -Maximum 2 listings per person\n
+        **__Usage:__**\n
+        `.buy *name of item*` | `.sell *name* *value* *description*`\n\n
+        **SHOP:**"""
+        embed = discord.Embed(description = desc, color = 1048464)
         embed.set_author(name = 'Midnight Crew Shop', icon_url = 'https://cdn.discordapp.com/emojis/846067291589574666.png')
         embed.set_thumbnail(url = "https://media.discordapp.net/attachments/836912159573147649/847872413081141308/rffcgddd.png?width=504&height=640")
         if not await sqlt.checkshop(ctx.guild):
@@ -176,7 +183,7 @@ class Eco(commands.Cog):
                 if len(name) >= 30:
                     await ctx.send("Overexceeded 20 characters for name")
                 elif len(value) >= 100:
-                    await ctx.send("Overexceeded 50 characters for value")
+                    await ctx.send("Overexceeded 100 characters for value")
                 elif float(price) < 0.01:
                     await ctx.send("Invalid price (minimum 0.01)")
                 else:
