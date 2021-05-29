@@ -19,7 +19,7 @@ class Tooth(commands.Cog):
 
     @tasks.loop(hours=24) # A loop that loops every 24 hours
     async def lockt(self, user, server):
-        await sqlt.addbank(5)
+        await sqlt.addbank(server, 5)
         if await sqlt.checkb(server, user): # checkb checks whether a person has brushed their teeth
             await sqlt.makef(server, user) #if they have, i will turn to false and a new day will start
         else:
@@ -65,7 +65,7 @@ class Tooth(commands.Cog):
                 await ctx.send('You brushed your teeth, nice job!')
                 roles = await sqlt.roleget(ctx.guild, ctx.author) # gets original roles from db
                 if roles == None:
-                    await sqlt.addbal(ctx.author, 1)
+                    await sqlt.addbal(ctx.guild, ctx.author, 1)
                 else:
                     rolelist = roles.split(', ')
                     for i in rolelist:
@@ -79,7 +79,7 @@ class Tooth(commands.Cog):
                         await ctx.author.edit(deafen = False, mute = False)
                     except:
                         print("Couldn't undeafen/unmute user.")
-                    await sqlt.addbal(ctx.author, 1)
+                    await sqlt.addbal(ctx.guild, ctx.author, 1)
         else: # if not in database this is sent
             embed = discord.Embed()
             embed.add_field(name = "Want to get started?", value = "Just use .join to start getting reminded!", inline = False)
@@ -101,8 +101,6 @@ class Tooth(commands.Cog):
             embed.set_footer(text= "You joined! Nice")
             await ctx.send(embed=embed)
             self.lockt.start(ctx.author, ctx.guild) #the task starts running
-            if isinstance(await sqlt.checkbal(ctx.author), bool):
-                await sqlt.createbal(ctx.author)
 
 def setup(bot):
     bot.add_cog(Tooth(bot))

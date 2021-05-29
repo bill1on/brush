@@ -16,6 +16,11 @@ async def on_ready():
         await sqlt.loopcrypto(client)
     print('We have logged in as {0.user}'.format(client))
 
+@client.event
+async def on_guild_join(guild):
+    await sqlt.createbank(guild)
+
+
 if __name__ == '__main__':
     for extension in extensions:
         try:

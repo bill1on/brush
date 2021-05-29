@@ -38,12 +38,11 @@ class Kaiji(commands.Cog):
         embed.add_field(name= "How does one win a game?", value = "The game has 8 total rounds. The odds of the Slave side winning for each round is mathematically 1/4. For the Slave side to win a game they need to win a total of 2 rounds. For the Emperor side to win they need to win a total of 8 rounds. Which ever side wins their required amount of rounds first wins the game.", inline = False)
         await ctx.send(embed = embed)
 
-
     @commands.command(aliases = ['duel', 'ec'])
     @commands.guild_only()
     async def ecard(self, ctx, user: discord.User, beet):
-        currentbalo = await sqlt.checkbal(ctx.author)
-        currentbalopo = await sqlt.checkbal(user)
+        currentbalo = await sqlt.checkbal(ctx.guild, ctx.author)
+        currentbalopo = await sqlt.checkbal(ctx.guild, user)
         tee = float(currentbalo)
         teeop = float(currentbalopo)
         balo = round(tee, 2)

@@ -13,10 +13,10 @@ class Eco(commands.Cog):
 
     @commands.command()
     async def bal(self, ctx):
-        tbal = await sqlt.checkbal(ctx.author)
+        tbal = await sqlt.checkbal(ctx.guild, ctx.author)
         pbal = round(tbal, 2)
         if not isinstance(pbal, bool):
-            pos = await sqlt.balleader(ctx.author)
+            pos = await sqlt.balleader(ctx.guild, ctx.author)
             if str(pos).endswith('1'):
                 rank = str(pos) + 'st'
             elif str(pos).endswith('2'):
@@ -34,8 +34,8 @@ class Eco(commands.Cog):
             await ctx.send(embed = embed)
         else:
             await sqlt.createbal(ctx.author)
-            pbal = await sqlt.checkbal(ctx.author)
-            pos = await sqlt.balleader(ctx.author)
+            pbal = await sqlt.checkbal(ctx.guild, ctx.author)
+            pos = await sqlt.balleader(ctx.guild, ctx.author)
             if str(pos).endswith('1'):
                 rank = str(pos) + 'st'
             elif str(pos).endswith('2'):
@@ -63,8 +63,8 @@ class Eco(commands.Cog):
     @commands.guild_only()
     @commands.cooldown(1, 2, commands.BucketType.user)
     async def coinflip(self, ctx, v, m):
-        bank = await sqlt.getbankval()
-        currentbal = await sqlt.checkbal(ctx.author)
+        bank = await sqlt.getbankval(ctx.guild)
+        currentbal = await sqlt.checkbal(ctx.guild, ctx.author)
         if v.lower() == 'all':
             v = currentbal
         t = float(v)
@@ -83,39 +83,39 @@ class Eco(commands.Cog):
             if m.lower().startswith('b'):
                 if int(r) >= 102:
                     await ctx.send('https://cdn.discordapp.com/attachments/695949677694156834/847557850598211634/blueg.gif')
-                    await sqlt.removebank(val)
-                    await sqlt.addbal(ctx.author, val)
+                    await sqlt.removebank(ctx.guild, val)
+                    await sqlt.addbal(ctx.guild, ctx.author, val)
                 elif int(r) == 100 or int(r) == 101:
                     await ctx.send('GET GREENED ON')
-                    await sqlt.addbank(val)
-                    await sqlt.removebal(ctx.author, val)
+                    await sqlt.addbank(ctx.guild, val)
+                    await sqlt.removebal(ctx.guild, ctx.author, val)
                 else:
                     await ctx.send('https://cdn.discordapp.com/attachments/695949677694156834/847557856944717834/redg.gif')
-                    await sqlt.addbank(val)
-                    await sqlt.removebal(ctx.author, val)
+                    await sqlt.addbank(ctx.guild, val)
+                    await sqlt.removebal(ctx.guild, ctx.author, val)
             elif m.lower().startswith('r'):
                 if int(r) <= 99:
                     await ctx.send('https://cdn.discordapp.com/attachments/695949677694156834/847557856944717834/redg.gif')
-                    await sqlt.removebank(val)
-                    await sqlt.addbal(ctx.author, val)
+                    await sqlt.removebank(ctx.guild, val)
+                    await sqlt.addbal(ctx.guild, ctx.author, val)
                 elif int(r) == 100 or int(r) == 101:
                     await ctx.send('GET GREENED ON')
-                    await sqlt.addbank(val)
-                    await sqlt.removebal(ctx.author, val)
+                    await sqlt.addbank(ctx.guild, val)
+                    await sqlt.removebal(ctx.guild, ctx.author, val)
                 else:
                     await ctx.send('https://cdn.discordapp.com/attachments/695949677694156834/847557850598211634/blueg.gif')
-                    await sqlt.addbank(val)
-                    await sqlt.removebal(ctx.author, val)
+                    await sqlt.addbank(ctx.guild, val)
+                    await sqlt.removebal(ctx.guild, ctx.author, val)
             else:
                 await ctx.send("Please enter a valid bet choice. *Red / Blue*")
-            print(await sqlt.getbankval())
+            print(await sqlt.getbankval(ctx.guild))
 
     @commands.command()
     async def bank(self, ctx):
         now = datetime.now()
         embed = discord.Embed()
         embed.set_author(name = f"{ctx.author.name + '#' + ctx.author.discriminator}", icon_url = f'{ctx.author.avatar_url}')
-        embed.add_field(name = '**Bank**', value = f"The bank has : <:mdct:843999368095989770> {round(await sqlt.getbankval(), 2)} MCT")
+        embed.add_field(name = '**Bank**', value = f"The bank has : <:mdct:843999368095989770> {round(await sqlt.getbankval(ctx.guild), 2)} MCT")
         embed.set_footer(text = f"{str(now.day) + '/' + str(now.month) + '  ' + str(now.hour) + ':' + str(now.minute)}", icon_url = 'https://media.discordapp.net/attachments/756537548180029481/846092160193396757/images.png')
         await ctx.send(embed = embed)
 
@@ -128,7 +128,7 @@ class Eco(commands.Cog):
         embed = discord.Embed()
         embed.set_author(name = f"{ctx.author.name + '#' + ctx.author.discriminator}", icon_url = f'{ctx.author.avatar_url}')
         embed.set_footer(text = f"{str(now.day) + '/' + str(now.month) + '  ' + str(now.hour) + ':' + str(now.minute)}", icon_url = 'https://media.discordapp.net/attachments/756537548180029481/846092160193396757/images.png')
-        lead = await sqlt.lead()
+        lead = await sqlt.lead(ctx.guild)
         for i in lead:
             if cnt == 1:
                 mbm = await ctx.guild.fetch_member(i[0])
@@ -144,7 +144,7 @@ class Eco(commands.Cog):
             else:
                 ind = str(cnt) + 'th'
             mbm = await ctx.guild.fetch_member(i[0])
-            bal = await sqlt.checkbal(mbm)
+            bal = await sqlt.checkbal(ctx.guild, mbm)
             txt = txt + f'**{ind}**. {mbm.name}#{mbm.discriminator} | <:mdct:843999368095989770> **{round(bal, 2)}** MCT\n'
             cnt += 1
         embed.add_field(name = '**Leaderboard.**', value = txt)
@@ -168,8 +168,8 @@ class Eco(commands.Cog):
     @commands.command()
     async def sell(self, ctx, name, price, *value):
         price = round(float(price), 2)
-        if not isinstance(await sqlt.checkbal(ctx.author), bool):
-            if await sqlt.listingpermember(ctx.author) >= 2:
+        if not isinstance(await sqlt.checkbal(ctx.guild, ctx.author), bool):
+            if await sqlt.listingpermember(ctx.guild, ctx.author) >= 2:
                 await ctx.send("Can't list more than 2 items!")
             else:
                 value = ' '.join(value)
@@ -180,7 +180,7 @@ class Eco(commands.Cog):
                 elif float(price) < 0.01:
                     await ctx.send("Invalid price (minimum 0.01)")
                 else:
-                    slist = await sqlt.checkshopname(name)
+                    slist = await sqlt.checkshopname(ctx.guild, name)
                     for i in slist:
                         if name in i:
                             await ctx.send("Name is already used!")
@@ -192,8 +192,8 @@ class Eco(commands.Cog):
 
     @commands.command()
     async def buy(self, ctx, name):
-        items = await sqlt.checkshopname(name)
-        if items[0][4] > await sqlt.checkbal(ctx.author):
+        items = await sqlt.checkshopname(ctx.guild, name)
+        if items[0][4] > await sqlt.checkbal(ctx.guild, ctx.author):
             await ctx.send("Not enough money")
             return
         elif items[0][0] == ctx.author.id:
@@ -203,18 +203,18 @@ class Eco(commands.Cog):
         await sqlt.removebal(ctx.author, float(items[4]))
         await ctx.send(f"Sucessfully bought {name} for <:mdct:843999368095989770> **{items[4]}** MCT")
         seller = ctx.guild.get_member(items[0])
-        await sqlt.addbal(seller, float(items[4]))
+        await sqlt.addbal(ctx.guild, seller, float(items[4]))
         await seller.send(f"Someone has bought {name}! You've received <:mdct:843999368095989770> **{items[4]}** MCT")
-        await sqlt.removeshop(items)
+        await sqlt.removeshop(ctx.guild, items)
 
     @commands.command()
     async def remove(self, ctx, name):
-        items = await sqlt.checkshopname(name)
+        items = await sqlt.checkshopname(ctx.guild, name)
         if ctx.author.id == items[0][0]:
-            await sqlt.removeshop(items[0])
+            await sqlt.removeshop(ctx.guild, items[0])
         else:
             if ctx.author.guild_permissions.administrator:
-                await sqlt.removeshop(items[0])
+                await sqlt.removeshop(ctx.guild, items[0])
             else:
                 await ctx.send("You don't have permissions to remove someone else's item.")
 
@@ -225,7 +225,7 @@ class Eco(commands.Cog):
         if int(am) < 0.01:
             await ctx.send("Please enter a valid amount (0.01 minimum)")
         else:
-            await sqlt.addbal(member, float(am))
+            await sqlt.addbal(ctx.guild, member, float(am))
             await sqlt.removebal(ctx.author, float(am))
             await ctx.send(f"Sent <:mdct:843999368095989770> **{am}** MCT to {member}")
 

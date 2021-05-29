@@ -7,367 +7,369 @@ import asyncio
 from cogs import tooth
 from cogs import crypto
 
-sqldb = """CREATE TABLE IF NOT EXISTS ACTIVE (
-            memberID integer PRIMARY KEY,
-            guildID int,
-            brushedt int
-        )"""
+def maindb(guildID):
+    sqldb = f"""CREATE TABLE IF NOT EXISTS MAIN{str(guildID)} (
+                memberID integer PRIMARY KEY,
+                guildID int,
+                balance float,
+                brushedt int,
+                rolelist TEXT
+            )"""
+    return sqldb
 
-sqlr = """CREATE TABLE IF NOT EXISTS ROLES (
-            memberID integer PRIMARY KEY,
-            guildID int,
-            rolelist TEXT
-        )"""
+def bankdb(guildID):
+    sqldbb = f"""CREATE TABLE IF NOT EXISTS BANK{guildID}(
+                balance float
+    )"""
+    return sqldbb
 
-sqlb = """CREATE TABLE IF NOT EXISTS BALANCE (
-            memberID integer PRIMARY KEY,
-            balance float
-)"""
+def cryptodb(guildID):
+    sqlt = f"""CREATE TABLE IF NOT EXISTS CRYPTO{guildID} (
+                channelid integer,
+                guildid integer,
+                time integer
+    )"""
+    return sqlt
 
-sqlg = """CREATE TABLE IF NOT EXISTS BANK (
-            balance float
-)"""
-
-sqlt = """CREATE TABLE IF NOT EXISTS CRYPTO (
-            channelid integer,
-            guildid integer,
-            time integer
-)"""
-
-sqls = """CREATE TABLE IF NOT EXISTS SHOP (
-            memberid integer,
-            guildid integer,
-            name,
-            value,
-            price
-)"""
+def shopdb(guildID):
+    sqls = f"""CREATE TABLE IF NOT EXISTS SHOP{guildID} (
+                memberid integer,
+                guildid integer,
+                name,
+                value,
+                price integer
+    )"""
+    return sqls
 
 async def maket(guild, member): #updates the boolean value "brushed" to True of the given user 'member'
     async with aiosqlite.connect('db.db') as db:
-        await db.execute(sqldb)
+        await db.execute(maindb(guild.id))
         async with db.cursor() as crs:
-            await crs.execute("""SELECT memberID, guildID, brushedt FROM ACTIVE""")
+            await crs.execute(f"""SELECT memberID, guildID, brushedt FROM MAIN{guild.id}""")
             vals = await crs.fetchall()
             for i in vals:
                 if member.id == i[0] and guild.id == int(i[1]):
                     val = 1
-                    await crs.execute(f"""UPDATE ACTIVE SET brushedt = {val} WHERE memberID = {i[0]}""")
+                    await crs.execute(f"""UPDATE MAIN{guild.id} SET brushedt = {val} WHERE memberID = {i[0]}""")
                     await db.commit()
-                    break
+                    break # D
 
 async def loopsql(bot): #loop which is run everytime the bot starts to make sure that the users in the database are running the task
-    async with aiosqlite.connect('db.db') as db:
-        await db.execute(sqldb)
+    async with aiosqlite.connect("db.db") as db:
         async with db.cursor() as crs:
-            await crs.execute("""SELECT memberID, guildID FROM ACTIVE""")
-            vals = await crs.fetchall()
-            for i in vals:
-                server = bot.get_guild(int(i[1]))
-                member = server.get_member(i[0])
-                tooth.Tooth(bot).lockt.start(member, server)
+            await crs.execute("SELECT name FROM sqlite_master WHERE type= 'table';")
+            tlist = await crs.fetchall()
+            for i in tlist:
+                if i[0].startswith('MAIN'):
+                    await crs.execute(f"""SELECT memberID, guildID FROM {i[0]}""")
+                    dat = await crs.fetchall()
+                    for i in dat:
+                        server = bot.get_guild(i[1])
+                        member = server.get_member(i[0])
+                        tooth.Tooth(bot).lockt.start(member, server) # -------------------------------MAJOR QUESTION MARK COME BACK LATER
 
 async def makef(guild, member): #makes the boolean value 'brushed' False in the database
     async with aiosqlite.connect('db.db') as db:
-        await db.execute(sqldb)
+        await db.execute(maindb(guild.id))
         async with db.cursor() as crs:
-            await crs.execute("""SELECT memberID, guildID, brushedt FROM ACTIVE""")
+            await crs.execute(f"""SELECT memberID, guildID, brushedt FROM MAIN{guild.id}""")
             vals = await crs.fetchall()
             for i in vals:
-                if member.id == i[0] and guild.id == int(i[1]):
+                if member.id in i and guild.id in i:
                     val = 0
-                    await crs.execute(f"""UPDATE ACTIVE SET brushedt = {val} WHERE memberID = {i[0]}""")
+                    await crs.execute(f"""UPDATE MAIN{guild.id} SET brushedt = {val} WHERE memberID = {i[0]}""")
                     await db.commit()
-                    break
+                    break # D
 
 async def checkb(guild, member): #checks whether the boolean value "brushed" is True or False
     async with aiosqlite.connect('db.db') as db:
-        await db.execute(sqldb)
+        await db.execute(maindb(guild.id))
         async with db.cursor() as crs:
-            await crs.execute("""SELECT memberID, guildID, brushedt FROM ACTIVE""")
+            await crs.execute(f"""SELECT memberID, guildID, brushedt FROM MAIN{guild.id}""")
             vals = await crs.fetchall()
             for i in vals:
-                if member.id == i[0] and guild.id == int(i[1]):
+                if member.id in i and guild.id in i:
                     if i[2] == 0:
                         return False
                     elif i[2] == 1:
-                        return True
+                        return True #D
 
 async def checkt(guild, member): # checks whether a person is in the database
     async with aiosqlite.connect('db.db') as db:
-        await db.execute(sqldb)
+        await db.execute(maindb(guild.id))
         async with db.cursor() as crs:
-            await crs.execute("""SELECT memberID, guildID FROM ACTIVE""")
+            await crs.execute(f"""SELECT memberID, guildID FROM MAIN{str(guild.id)}""")
             vals = await crs.fetchall()  
             for i in vals:
-                if member.id == int(i[0]):
-                    if int(i[1]) == guild.id:
-                        return True
-        return False           
+                if member.id in i and guild.id in i:
+                    return True
+            return False  #D
  
 async def addt(guild, member): #adds the person to the database
     async with aiosqlite.connect('db.db') as db:
-        await db.execute(sqldb)
+        await db.execute(maindb(guild.id))
         async with db.cursor() as crs:
-            await crs.execute("""INSERT INTO ACTIVE (guildID, memberID, brushedt) VALUES (:guildID, :memberID, :brushedval)""", {'guildID': guild.id, 'memberID': member.id, 'brushedval': False})
-            await db.commit()
+            await crs.execute(f"""INSERT INTO MAIN{guild.id} (guildID, memberID, balance, brushedt) VALUES (:guildID, :memberID, :balance, :brushedval)""", {'guildID': guild.id, 'memberID': member.id, 'balance': 0, 'brushedval': False})
+            await db.commit() #D
 
 async def roleadd(guild, member, rlist): #adds the list of roles to the database that the user currently has
     async with aiosqlite.connect('db.db') as db:
-        await db.execute(sqlr)
+        await db.execute(maindb(guild.id))
         async with db.cursor() as crs:
-            await crs.execute("""INSERT INTO ROLES (guildID, memberID, rolelist) VALUES (:guildID, :memberID, :roleval)""", {'guildID': guild.id, 'memberID': member.id, 'roleval': rlist})
-            await db.commit()
+            await crs.execute(f"""UPDATE MAIN{guild.id} SET rolelist = {rlist} WHERE memberID = {member.id}""")
+            await db.commit() #D
 
 async def roleget(guild, member): # fetches the roles from the database
     async with aiosqlite.connect('db.db') as db:
-        await db.execute(sqlr)
+        await db.execute(maindb(guild.id))
         async with db.cursor() as crs:
-            await crs.execute("""SELECT memberID, guildID, rolelist FROM ROLES""")
+            await crs.execute(f"""SELECT memberID, guildID, rolelist FROM MAIN{guild.id}""")
             vals = await crs.fetchall()
             for i in vals:
                 if member.id == i[0] and guild.id == i[1]:
-                    return i[2]
+                    return i[2] #D
 
 async def checkrole(guild, member): # checks if the user is in the roles database
     async with aiosqlite.connect('db.db') as db:
-        await db.execute(sqlr)
+        await db.execute(maindb(guild.id))
         async with db.cursor() as crs:
-            await crs.execute("""SELECT memberID, guildID, rolelist FROM ROLES""")
+            await crs.execute(f"""SELECT memberID, guildID, rolelist FROM MAIN{guild.id}""")
             vals = await crs.fetchall()
             for i in vals:
                 if member.id == i[0] and guild.id == i[1]:
                     return True
                 else:
-                    return False
+                    return False #D
 
 async def deleterole(guild, member): # deletes data from user from database
     async with aiosqlite.connect('db.db') as db:
-        await db.execute(sqlr)
+        await db.execute(maindb(guild.id))
         async with db.cursor() as crs:
-            await crs.execute("""SELECT memberID, guildID FROM ROLES""")
+            await crs.execute(f"""SELECT memberID, guildID, rolelist FROM MAIN{guild.id}""")
             vals = await crs.fetchall()
             for i in vals:
                 if member.id == i[0] and guild.id == i[1]:
-                    await crs.execute(f"""DELETE FROM ROLES WHERE memberID = {i[0]}""")
+                    await crs.execute(f"""UPDATE MAIN{guild.id} SET rolelist = NULL WHERE memberID = {i[0]}""")
                     await db.commit()
-                    break
-    
-async def createbal(member):
-    async with aiosqlite.connect('db.db') as db:
-        await db.execute(sqlb)
-        async with db.cursor() as crs:
-            await crs.execute("""INSERT INTO BALANCE (memberID, balance) VALUES (:memberID, :balanceval)""", {'memberID': member.id, 'balanceval': 0})
-            await db.commit()
+                    break #D
 
-async def checkbal(member):
+async def checkbal(guild, member):
     async with aiosqlite.connect('db.db') as db:
-        await db.execute(sqlb)
+        await db.execute(maindb(guild.id))
         async with db.cursor() as crs:
-            await crs.execute("""SELECT memberID, balance FROM BALANCE""")
+            await crs.execute(f"""SELECT memberID, balance FROM MAIN{guild.id}""")
             vals = await crs.fetchall()  
             for i in vals:
                 if member.id == i[0]:
                     return i[1]
-        return False           
+        return False #D
 
-async def balleader(member):
+async def balleader(guild, member):
     async with aiosqlite.connect('db.db') as db:
         count = 1
-        await db.execute(sqlb)
+        await db.execute(maindb(guild.id))
         async with db.cursor() as crs:
-            await crs.execute("""SELECT memberID, balance FROM BALANCE ORDER BY balance DESC""")
+            await crs.execute(f"""SELECT memberID, balance FROM MAIN{guild.id} ORDER BY balance DESC""")
             vals = await crs.fetchall()  
             for i in vals:
                 if member.id == i[0]:
                     return count
                 else:
-                    count += 1      
+                    count += 1 #D
 
-async def addbal(member, amount):
+async def addbal(guild, member, amount):
     async with aiosqlite.connect('db.db') as db:
-        await db.execute(sqlb)
+        await db.execute(maindb(guild.id))
         async with db.cursor() as crs:
-            await crs.execute("""SELECT memberID, balance FROM BALANCE""")
+            await crs.execute(f"""SELECT memberID, balance FROM MAIN{guild.id}""")
             vals = await crs.fetchall()  
             for i in vals:
                 if i[0] == member.id:
                     old = i[1]
                     tnew = old + amount
                     new = round(tnew, 2)
-                    await crs.execute(f"""UPDATE BALANCE SET balance = {new} WHERE memberID = {member.id}""")
+                    await crs.execute(f"""UPDATE MAIN{guild.id} SET balance = {new} WHERE memberID = {member.id}""")
                     await db.commit()
-                    break
+                    break #D
 
-async def removebal(member, amount):
+async def removebal(guild, member, amount):
     async with aiosqlite.connect('db.db') as db:
-        await db.execute(sqlb)
+        await db.execute(maindb(guild.id))
         async with db.cursor() as crs:
-            await crs.execute("""SELECT memberID, balance FROM BALANCE""")
+            await crs.execute(f"""SELECT memberID, balance FROM MAIN{guild.id}""")
             vals = await crs.fetchall()  
             for i in vals:
                 if i[0] == member.id:
                     old = i[1]
                     tnew = old - amount
                     new = round(tnew, 2)
-                    await crs.execute(f"""UPDATE BALANCE SET balance = {new} WHERE memberID = {member.id}""")
+                    await crs.execute(f"""UPDATE MAIN{guild.id} SET balance = {new} WHERE memberID = {member.id}""")
                     await db.commit()
-                    break
+                    break #D
 
-async def addbank(amount):
+async def addbank(guild, amount):
     async with aiosqlite.connect('db.db') as db:
-        await db.execute(sqlg)
+        await db.execute(bankdb(guild.id))
         async with db.cursor() as crs:
-            await crs.execute("""SELECT balance FROM BANK""")
+            await crs.execute(f"""SELECT balance FROM BANK{guild.id}""")
             vals = await crs.fetchall()  
             for i in vals:
                 old = i[0]
                 tnew = old + amount
                 new = round(tnew, 2)
-                await crs.execute(f"""UPDATE BANK SET balance = {new}""")
+                await crs.execute(f"""UPDATE BANK{guild.id} SET balance = {new}""")
                 await db.commit()
-                break
+                break #D
 
-async def removebank(amount):
-    async with aiosqlite.connect('db.db') as db:
-        await db.execute(sqlg)
+async def createbank(guild):
+     async with aiosqlite.connect('db.db') as db:
+        await db.execute(bankdb(guild.id))
         async with db.cursor() as crs:
-            await crs.execute("""SELECT balance FROM BANK""")
+            await crs.execute(f"""INSERT INTO BANK{guild.id} (balance) VALUES (:balance)""", {'balance': 0})
+            await db.commit() #D
+
+async def removebank(guild, amount):
+    async with aiosqlite.connect('db.db') as db:
+        await db.execute(bankdb(guild.id))
+        async with db.cursor() as crs:
+            await crs.execute(f"""SELECT balance FROM BANK{guild.id}""")
             vals = await crs.fetchall()  
             for i in vals:
                 old = i[0]
                 tnew = old - amount
                 new = round(tnew, 2)
-                await crs.execute(f"""UPDATE BANK SET balance = {new}""")
+                await crs.execute(f"""UPDATE BANK{guild.id} SET balance = {new}""")
                 await db.commit()
-                break
+                break #D
 
-async def getbankval():
+async def getbankval(guild):
      async with aiosqlite.connect('db.db') as db:
-        await db.execute(sqlg)
+        await db.execute(bankdb(guild.id))
         async with db.cursor() as crs:
-            await crs.execute("""SELECT balance FROM BANK""")
+            await crs.execute(f"""SELECT balance FROM BANK{guild.id}""")
             vals = await crs.fetchall()  
             for i in vals:
-                return i[0]
+                return i[0] #D
 
-async def lead():
+async def lead(guild):
     async with aiosqlite.connect('db.db') as db:
-        await db.execute(sqlb)
+        await db.execute(maindb(guild.id))
         async with db.cursor() as crs:
-            await crs.execute("""SELECT memberID, balance FROM BALANCE ORDER BY balance DESC""")
+            await crs.execute(f"""SELECT memberID, balance FROM MAIN{guild.id} ORDER BY balance DESC""")
             vals = await crs.fetchall()  
-            return vals
+            return vals #D
 
 async def createcchannel(channel):
     async with aiosqlite.connect('db.db') as db:
-        await db.execute(sqlt)
+        await db.execute(cryptodb(channel.guild.id))
         async with db.cursor() as crs:
-            await crs.execute("""INSERT INTO CRYPTO (channelid, guildid) VALUES (:channelID, :guildID)""", {'channelID': channel.id, 'guildID': channel.guild.id})
-            await db.commit()
+            await crs.execute(f"""INSERT INTO CRYPTO{channel.guild.id} (channelid, guildid) VALUES (:channelID, :guildID)""", {'channelID': channel.id, 'guildID': channel.guild.id})
+            await db.commit() #D
 
 async def updatetime(channel, time):
     async with aiosqlite.connect('db.db') as db:
-        await db.execute(sqlt)
+        await db.execute(cryptodb(channel.guild.id))
         async with db.cursor() as crs:
-            await crs.execute("""SELECT channelid, guildid, time FROM CRYPTO""")
+            await crs.execute(f"""SELECT channelid, guildid, time FROM CRYPTO{channel.guild.id}""")
             vals = await crs.fetchall()
             for i in vals:
                 if channel.id == i[0] and channel.guild.id == i[1]:
-                    await crs.execute(f"""UPDATE CRYPTO SET time = {time} WHERE guildid = {channel.guild.id}""")
+                    await crs.execute(f"""UPDATE CRYPTO{channel.guild.id} SET time = {time} WHERE guildid = {channel.guild.id}""")
                     await db.commit()
-                    break
+                    break #D
 
 async def checktime(channel):
      async with aiosqlite.connect('db.db') as db:
-        await db.execute(sqlt)
+        await db.execute(cryptodb(channel.guild.id))
         async with db.cursor() as crs:
-            await crs.execute("""SELECT channelid, time FROM CRYPTO""")
+            await crs.execute(f"""SELECT channelid, time FROM CRYPTO{channel.guild.id}""")
             vals = await crs.fetchall()
             if len(vals) == 0:
                 return False
             else:
                 for i in vals:
                     if i[0] == channel.id:
-                        return i[1]
+                        return i[1] #D
     
 async def loopcrypto(bot):
-    async with aiosqlite.connect('db.db') as db:
-        await db.execute(sqlt)
+    async with aiosqlite.connect("db.db") as db:
         async with db.cursor() as crs:
-            await crs.execute("""SELECT channelid, guildid, time FROM CRYPTO""")
-            vals = await crs.fetchall()
-            if not len(vals) == 0:
-                for i in vals:
-                    channel = bot.get_channel(i[0])
-                    await crypto.whaletrans.start(channel)
+            await crs.execute("SELECT name FROM sqlite_master WHERE type= 'table';")
+            tlist = await crs.fetchall()
+            for i in tlist:
+                if i[0].startswith('CRYPTO'):
+                    await crs.execute(f"""SELECT channelid FROM {i[0]}""")
+                    dat = await crs.fetchall()
+                    for i in dat:
+                        await crypto.whaletrans.start(bot.get_channel(i[0])) #--- COME BACK LATER MAJOR ISSUE
 
 async def removecrypto(channel):
     async with aiosqlite.connect('db.db') as db:
-        await db.execute(sqlt)
+        await db.execute(cryptodb(channel.guild.id))
         async with db.cursor() as crs:
-            await crs.execute("""SELECT channelid FROM CRYPTO""")
+            await crs.execute(f"""SELECT channelid FROM CRYPTO{channel.guild.id}""")
             vals = await crs.fetchall()
-            await crs.execute(f"""DELETE FROM CRYPTO WHERE channelid = {channel.id}""")
-            await db.commit()
+            await crs.execute(f"""DELETE FROM CRYPTO{channel.guild.id} WHERE channelid = {channel.id}""")
+            await db.commit() #D
             
 async def checkshop(guild):
     async with aiosqlite.connect('db.db') as db:
-        await db.execute(sqls)
+        await db.execute(shopdb(guild.id))
         async with db.cursor() as crs:
-            await crs.execute("""SELECT guildid FROM SHOP""")
+            await crs.execute(f"""SELECT guildid FROM SHOP{guild.id}""")
             vals = await crs.fetchall()
             for i in vals:
                 if i[0] == guild.id:
                     return True
-            return False
+            return False #D
             
 async def auctionshop(member, guild, name, value, price):
     async with aiosqlite.connect('db.db') as db:
-        await db.execute(sqls)
+        await db.execute(shopdb(guild.id))
         async with db.cursor() as crs:
-             await crs.execute("""INSERT INTO SHOP (memberid, guildid, name, value, price) VALUES (:memberID, :guildID, :name, :value, :price)""", {'memberID': member.id, 'guildID': guild.id, 'name': name, 'value': value, 'price': price})
-             await db.commit()
+             await crs.execute(f"""INSERT INTO SHOP{guild.id} (memberid, guildid, name, value, price) VALUES (:memberID, :guildID, :name, :value, :price)""", {'memberID': member.id, 'guildID': guild.id, 'name': name, 'value': value, 'price': price})
+             await db.commit() #D
 
 async def getshop(guild):
     async with aiosqlite.connect('db.db') as db:
-        await db.execute(sqls)
+        await db.execute(shopdb(guild.id))
         async with db.cursor() as crs:
             rlist = []
-            await crs.execute("""SELECT memberid, guildid, name, value, price FROM SHOP""")
+            await crs.execute(f"""SELECT memberid, guildid, name, value, price FROM SHOP{guild.id}""")
             vals = await crs.fetchall()
             for i in vals:
                 if i[1] == guild.id:
                     alist = [i[0], i[2], i[3], i[4]]
                     rlist.append(alist)
-            return rlist
+            return rlist #D
 
-async def listingpermember(member):
+async def listingpermember(guild, member):
     async with aiosqlite.connect('db.db') as db:
         c = 0
-        await db.execute(sqls)
+        await db.execute(shopdb(guild.id))
         async with db.cursor() as crs:
-            await crs.execute("""SELECT memberid FROM SHOP""")
+            await crs.execute(f"""SELECT memberid FROM SHOP{guild.id}""")
             vals = await crs.fetchall()
             for i in vals:
                 if i[0] == member.id:
                     c += 1
-            return c
+            return c #D
 
-async def checkshopname(name):
+async def checkshopname(guild, name):
     async with aiosqlite.connect('db.db') as db:
         ilist = []
-        await db.execute(sqls)
+        await db.execute(shopdb(guild.id))
         async with db.cursor() as crs:
-            await crs.execute("""SELECT memberid, guildid, name, value, price FROM SHOP""")
+            await crs.execute(f"""SELECT memberid, guildid, name, value, price FROM SHOP{guild.id}""")
             vals = await crs.fetchall()
             for i in vals:
                 if i[2] == name:
                     ilist.append(i)
-            return ilist
+            return ilist #D
 
-async def removeshop(list):
+async def removeshop(guild, list):
     async with aiosqlite.connect('db.db') as db:
-        await db.execute(sqls)
+        await db.execute(shopdb(guild.id))
         async with db.cursor() as crs:
-            await crs.execute(f"""DELETE FROM SHOP WHERE name = '{list[2]}' AND memberid = {list[0]}""")
-            await db.commit()
+            await crs.execute(f"""DELETE FROM SHOP{guild.id} WHERE name = '{list[2]}' AND memberid = {list[0]}""")
+            await db.commit() #D
