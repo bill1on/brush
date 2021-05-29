@@ -36,7 +36,7 @@ class Kaiji(commands.Cog):
         embed.add_field(name= "What's the setup?", value = "The game is played with one side having four Citizen cards and an Emperor card (Emperor side). The other side having four Citizen cards and a Slave card (Slave side).", inline = False)
         embed.add_field(name= "How does the game go?", value = how, inline = False)
         embed.add_field(name= "How do rounds work?", value = "The Emperor side start the first round, then the Slave side for the second round, they keep switching who starts back and forth until the game is over. Within each round the Emperor and Slave place their cards down first back and forth.", inline = False)
-        embed.add_field(name= "How does one win a game?", value = "The game has 8 total rounds. The odds of the Slave side winning for each round is mathematically 1/4. For the Slave side to win a game they need to win a total of 2 rounds. For the Emperor side to win they need to win a total of 8 rounds. Which ever side wins their required amount of rounds first wins the game.", inline = False)
+        embed.add_field(name= "How does one win a game?", value = "The game has 8 total rounds. The odds of the Slave side winning for each round is mathematically 1/4. For the Slave side to win a game they need to win a total of 2 rounds. For the Emperor side to win they need to win a total of 6 rounds. Which ever side wins their required amount of rounds first wins the game.", inline = False)
         await ctx.send(embed = embed)
 
     @commands.command(aliases = ['duel', 'ec'])
@@ -55,6 +55,16 @@ class Kaiji(commands.Cog):
         balof = float(balop)
         plyr1 = 1
         king = 0
+        slave = 0
+        currentpl = 0
+        nextpl = 0
+        turns = 0
+        firstp = 0
+        secondp = 0
+        kingpoints = 0
+        slavepoints = 0
+        gamestarted = 0
+        roundz = 0
         if betf < 0.01:
             await ctx.send("Please enter a minimum amount of 0.01 MCT")
         else:
@@ -80,7 +90,12 @@ class Kaiji(commands.Cog):
                                     await message.add_reaction(emoji)
                                 def check(reaction, user):
                                     return user == userx and str(reaction.emoji) in emojis
-                                reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=check)
+                                try:
+                                    reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=check)
+                                except asyncio.TimeoutError:
+                                    await ctx.author.send("Your opponent didn't accept/decline in time.")
+                                    await userx.send("Invitation timed out.")
+                                    return
                                 brurr = 1
                                 if str(reaction.emoji) == '\u2705':
                                     await userx.send('Duel accepted!')
@@ -92,11 +107,12 @@ class Kaiji(commands.Cog):
                                         await messageca.add_reaction(emoji)
                                     def check(reaction, user):
                                         return user == ctx.author and str(reaction.emoji) in emojisca
-                                   # try:
-                                    reaction, ctx.author = await self.bot.wait_for('reaction_add', timeout=10, check=check)
-                                    #except asyncio.TimeoutError:
-                                        #await ctx.author.send("You lost due to timeout.")
-                                        #return
+                                    try:
+                                        reaction, ctx.author = await self.bot.wait_for('reaction_add', timeout=60, check=check)
+                                    except asyncio.TimeoutError:
+                                        await ctx.author.send("You took too long to choose.")
+                                        await userx.send("Your opponent took too long to choose.")
+                                        return
                                     if str(reaction.emoji) == '\U0001F7E8':
                                         await ctx.author.send('You chose Emperor!')
                                         await ctx.author.send('Your opponent is picking whether or not he agrees. If he does not the Slave and Emperor will be randomized.')
@@ -106,7 +122,12 @@ class Kaiji(commands.Cog):
                                             await message.add_reaction(emoji)
                                         def check(reaction, user):
                                             return user == userx and str(reaction.emoji) in emojis
-                                        reaction, user = await self.bot.wait_for('reaction_add', timeout=120.0, check=check)
+                                        try:
+                                            reaction, user = await self.bot.wait_for('reaction_add', timeout=120.0, check=check)
+                                        except asyncio.TimeoutError:
+                                            await ctx.author.send("Your opponent took too long to choose.")
+                                            await userx.send("You took too long to choose.")
+                                            return
 
                                         if str(reaction.emoji) == '\u2705':
                                             await userx.send("Your opponent is playing the Emperor.")
@@ -127,7 +148,14 @@ class Kaiji(commands.Cog):
                                             await message.add_reaction(emoji)
                                         def check(reaction, user):
                                             return user == userx and str(reaction.emoji) in emojis
-                                        reaction, user = await self.bot.wait_for('reaction_add', timeout=120.0, check=check)
+                                        
+                                        try:
+                                            reaction, user = await self.bot.wait_for('reaction_add', timeout=120.0, check=check)
+                                        except asyncio.TimeoutError:
+                                            await ctx.author.send("Your opponent took too long to choose.")
+                                            await userx.send("You took too long to choose.")
+                                            return
+
 
                                         if str(reaction.emoji) == '\u2705':
                                             await userx.send("Your opponent is playing the Slave.")
@@ -144,25 +172,17 @@ class Kaiji(commands.Cog):
                                         await ctx.author.send(plyr1)
                                         king = ctx.author
                                         slave = userx
+                                        firstp = king
+                                        secondp = slave
+                                        gamestarted = 1
                                     else:
                                         await ctx.author.send('elsed')
                                         await ctx.author.send(plyr1)
                                         king = userx
                                         slave = ctx.author
-                                    await king.send('Here is your deck. Use :blue_square: for Citizen and :yellow_square: for Emperor.')
-                                    messageca = await king.send("https://cdn.discordapp.com/attachments/847576142290354236/847578461312385054/emp5.jpg")
-                                    emojisca = ['\U0001F7E6', '\U0001F7E8']
-                                    for emoji in emojisca:
-                                        await messageca.add_reaction(emoji)
-                                    def check(reaction, user):
-                                        return user == king and str(reaction.emoji) in emojisca
-                                    reaction, user = await self.bot.wait_for('reaction_add', timeout=120.0, check=check)
-
-                                    if str(reaction.emoji) == '\U0001F7E8':
-                                        await ctx.author.send('You chose Emperor!')
-                                    else:
-                                        await ctx.author.send('You chose Citizen!')
-
+                                        firstp = king
+                                        secondp = slave
+                                        gamestarted = 1
                                 else:
                                     await ctx.author.send("The Ecard duel with " + userx.name + " was declined.")
                                     await userx.send("Declined.")
@@ -172,12 +192,101 @@ class Kaiji(commands.Cog):
 #                                    await ctx.author.send("The Ecard duel with " + userx.name + " was automatically declined or timed out.")
 #                                else:
 #                                    await ctx.author.send("lole")
-
                 else:
                     await ctx.send("Please enter the @ of a valid opponent.")
             else:
                 await ctx.send("You are not registered to the brush bot, do .join to register.")
 
+        if gamestarted == 1:
+            roundz = 1
+            kingpoints = 0
+            slavepoints = 0
+
+            bluemo = "\U0001F7E6"
+            yelmo = "\U0001F7E8"
+            redmo = "\U0001F7E5"
+            
+            emp5 = "https://media.discordapp.net/attachments/847576142290354236/847578461312385054/emp5.jpg"
+            emp4 = "https://media.discordapp.net/attachments/847576142290354236/847578459864956969/emp4.jpg"
+            emp3 = "https://media.discordapp.net/attachments/847576142290354236/847578431289557022/emp3.jpg"
+            emp2 = "https://media.discordapp.net/attachments/847576142290354236/847578429662691338/emp2.jpg"
+            emp1 = "https://media.discordapp.net/attachments/847576142290354236/847578422225797150/emp1.jpg"
+
+            slv5 = "https://media.discordapp.net/attachments/847576142290354236/847578464714227732/slave5.jpg"
+            slv4 = "https://media.discordapp.net/attachments/847576142290354236/847578462504222750/slave4.jpg"
+            slv3 = "https://media.discordapp.net/attachments/847576142290354236/847578460141912064/slave3.jpg"
+            slv2 = "https://media.discordapp.net/attachments/847576142290354236/847578457561890836/slave2.jpg"
+            slv1 = "https://media.discordapp.net/attachments/847576142290354236/847578433584234586/slave1.jpg"
+
+
+            while (kingpoints < 6 and slavepoints < 2):
+                num = int(roundz)
+
+                if (num % 2) == 0:
+
+                    firstp = slave
+                    secondp = king
+
+                    fi5 = slv5
+                    fi4 = slv4
+                    fi3 = slv3
+                    fi2 = slv2
+                    fi1 = slv1
+                    fimo = redmo
+                    fine = "Slave"
+
+                    se5 = emp5
+                    se4 = emp4
+                    se3 = emp3
+                    se2 = emp2
+                    se1 = emp1
+                    semo = yelmo
+                    sene = "Emperor"
+
+                else:
+
+                    firstp = king
+                    secondp = slave
+
+                    fi5 = emp5
+                    fi4 = emp4
+                    fi3 = emp3
+                    fi2 = emp2
+                    fi1 = emp1
+                    fimo = yelmo
+                    fine = "Emperor"
+
+                    se5 = slv5
+                    se4 = slv4
+                    se3 = slv3
+                    se2 = slv2
+                    se1 = slv1
+                    semo = redmo
+                    sene = "Slave"
+                
+                turns = 1
+
+                currentpl = firstp
+                nextpl  = secondp
+
+                messageca = await currentpl.send(fi5)
+
+                emojisca = [bluemo, fimo]
+                for emoji in emojisca:
+                    await messageca.add_reaction(emoji)
+                def check(reaction, user):
+                    return user == currentpl and str(reaction.emoji) in emojisca
+                try:
+                    reaction, user = await self.bot.wait_for('reaction_add', timeout=120.0, check=check)
+                except asyncio.TimeoutError:
+                    await nextpl.send("Your opponent took too long to choose. You won " + betf + "MCT!")
+                    await currentpl.send("You took too long to choose. You lost " + betf + "MCT.")
+                    return
+
+                if str(reaction.emoji) == fimo:
+                    await currentpl.send('You chose Emperor!')
+                else:
+                    await currentpl.send('You chose Citizen!')
 
 
 

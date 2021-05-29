@@ -53,9 +53,12 @@ class Crypto(commands.Cog):
 
     @commands.command()
     async def csetup(self, ctx, channel:discord.TextChannel):
-        await sqlt.createcchannel(channel)
-        whaletrans.start(channel)
-        await ctx.send("Success!")
+        if sqlt.checkcrypto(channel):
+            await ctx.send("You can only have 1 channel sending updates.")
+        else:
+            await sqlt.createcchannel(channel)
+            whaletrans.start(channel)
+            await ctx.send("Success!")
 
     @commands.command()
     async def cstop(self, ctx, channel:discord.TextChannel):

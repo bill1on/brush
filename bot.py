@@ -1,11 +1,10 @@
 import discord
-import asyncio
 from discord.ext import commands
 from utilsdb import sqlt
 
 intents = discord.Intents.all()
 client = commands.Bot(command_prefix= '.', intents = intents)
-extensions = ['cogs.tooth', 'cogs.eco', 'cogs.crypto', 'cogs.kaiji']
+extensions = ['cogs.tooth', 'cogs.eco', 'cogs.crypto', 'cogs.kaiji', 'cogs.gamble']
 
 ENABLE_CRYPTO = True
 
@@ -19,8 +18,7 @@ async def on_ready():
 @client.event
 async def on_guild_join(guild):
     await sqlt.createbank(guild)
-
-
+    
 if __name__ == '__main__':
     for extension in extensions:
         try:
