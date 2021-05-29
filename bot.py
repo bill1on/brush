@@ -4,10 +4,10 @@ from discord.ext import commands
 from utilsdb import sqlt
 
 intents = discord.Intents.all()
-client = commands.Bot(command_prefix= '?', intents = intents)
+client = commands.Bot(command_prefix= '.', intents = intents)
 extensions = ['cogs.tooth', 'cogs.eco', 'cogs.crypto', 'cogs.kaiji']
 
-ENABLE_CRYPTO = False
+ENABLE_CRYPTO = True
 
 @client.event
 async def on_ready():
