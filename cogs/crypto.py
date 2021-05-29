@@ -6,7 +6,7 @@ from datetime import datetime
 import time
 from utilsdb import sqlt
 
-ENABLE_CRYPTO = True
+ENABLE_CRYPTO = False
 MIN_VALUE = 5000000
 if ENABLE_CRYPTO:
     with open('API_KEY.txt', 'r') as f:

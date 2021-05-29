@@ -183,8 +183,6 @@ class Kaiji(commands.Cog):
                                         firstp = king
                                         secondp = slave
                                         gamestarted = 1
-
-
                                 else:
                                     await ctx.author.send("The Ecard duel with " + userx.name + " was declined.")
                                     await userx.send("Declined.")
@@ -194,7 +192,6 @@ class Kaiji(commands.Cog):
 #                                    await ctx.author.send("The Ecard duel with " + userx.name + " was automatically declined or timed out.")
 #                                else:
 #                                    await ctx.author.send("lole")
-
                 else:
                     await ctx.send("Please enter the @ of a valid opponent.")
             else:
@@ -223,7 +220,7 @@ class Kaiji(commands.Cog):
 
 
             while (kingpoints < 6 and slavepoints < 2):
-                num = int(input(roundz))
+                num = int(roundz)
 
                 if (num % 2) == 0:
 
@@ -269,8 +266,8 @@ class Kaiji(commands.Cog):
                 
                 turns = 1
 
-                firstp = currentpl
-                secondp = nextpl
+                currentpl = firstp
+                nextpl  = secondp
 
                 messageca = await currentpl.send(fi5)
 
@@ -289,9 +286,7 @@ class Kaiji(commands.Cog):
                 if str(reaction.emoji) == fimo:
                     await currentpl.send('You chose Emperor!')
                 else:
-                    await currentpl.author.send('You chose Citizen!')
-        else:
-            return
+                    await currentpl.send('You chose Citizen!')
 
 
 
