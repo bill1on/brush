@@ -8,6 +8,7 @@ import aiohttp
 import time
 
 # Card images from GreysonX on deviantart and Kaiji Ultimate Survivor
+#bruhmoment
 
 class Kaiji(commands.Cog):
     def __init__(self, bot):
