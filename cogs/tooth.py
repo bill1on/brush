@@ -79,6 +79,7 @@ class Tooth(commands.Cog):
                     except:
                         print("Couldn't undeafen/unmute user.")
                     await sqlt.addbal(ctx.guild, ctx.author, 1)
+        
         else: # if not in database this is sent
             embed = discord.Embed()
             embed.add_field(name = "Want to get started?", value = "Just use .join to start getting reminded!", inline = False)

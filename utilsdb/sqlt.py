@@ -305,10 +305,19 @@ async def removecrypto(channel):
         await db.execute(cryptodb(channel.guild.id))
         async with db.cursor() as crs:
             await crs.execute(f"""SELECT channelid FROM CRYPTO{channel.guild.id}""")
-            vals = await crs.fetchall()
             await crs.execute(f"""DELETE FROM CRYPTO{channel.guild.id} WHERE channelid = {channel.id}""")
             await db.commit() #D
             
+async def checkcrypto(channel):
+    async with aiosqlite.connect('db.db') as db:
+        async with db.cursor() as crs:
+            await crs.execute(f"""SELECT channelid FROM CRYPTO{channel.guild.id}""")
+            vals = await crs.fetchall()
+            if len(vals) >= 1:
+                return True
+            else:
+                return False
+
 async def checkshop(guild):
     async with aiosqlite.connect('db.db') as db:
         await db.execute(shopdb(guild.id))

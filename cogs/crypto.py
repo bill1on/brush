@@ -6,7 +6,7 @@ from datetime import datetime
 import time
 from utilsdb import sqlt
 
-ENABLE_CRYPTO = False
+ENABLE_CRYPTO = True
 MIN_VALUE = 5000000
 if ENABLE_CRYPTO:
     with open('API_KEY.txt', 'r') as f:
@@ -53,9 +53,12 @@ class Crypto(commands.Cog):
 
     @commands.command()
     async def csetup(self, ctx, channel:discord.TextChannel):
-        await sqlt.createcchannel(channel)
-        whaletrans.start(channel)
-        await ctx.send("Success!")
+        if sqlt.checkcrypto(channel):
+            await ctx.send("You can only have 1 channel sending updates.")
+        else:
+            await sqlt.createcchannel(channel)
+            whaletrans.start(channel)
+            await ctx.send("Success!")
 
     @commands.command()
     async def cstop(self, ctx, channel:discord.TextChannel):
