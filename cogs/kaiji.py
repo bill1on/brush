@@ -80,7 +80,12 @@ class Kaiji(commands.Cog):
                                     await message.add_reaction(emoji)
                                 def check(reaction, user):
                                     return user == userx and str(reaction.emoji) in emojis
+                                try:
                                 reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=check)
+                                except asyncio.TimeoutError:
+                                    await ctx.author.send("Your opponent didn't accept/decline in time.")
+                                    await userx.send("Invitation timed out.")
+                                    return
                                 brurr = 1
                                 if str(reaction.emoji) == '\u2705':
                                     await userx.send('Duel accepted!')
@@ -92,11 +97,12 @@ class Kaiji(commands.Cog):
                                         await messageca.add_reaction(emoji)
                                     def check(reaction, user):
                                         return user == ctx.author and str(reaction.emoji) in emojisca
-                                   # try:
-                                    reaction, ctx.author = await self.bot.wait_for('reaction_add', timeout=10, check=check)
-                                    #except asyncio.TimeoutError:
-                                        #await ctx.author.send("You lost due to timeout.")
-                                        #return
+                                    try:
+                                    reaction, ctx.author = await self.bot.wait_for('reaction_add', timeout=60, check=check)
+                                    except asyncio.TimeoutError:
+                                        await ctx.author.send("You took too long to choose.")
+                                        await userx.send("Your opponent took too long to choose.")
+                                        return
                                     if str(reaction.emoji) == '\U0001F7E8':
                                         await ctx.author.send('You chose Emperor!')
                                         await ctx.author.send('Your opponent is picking whether or not he agrees. If he does not the Slave and Emperor will be randomized.')
@@ -106,7 +112,12 @@ class Kaiji(commands.Cog):
                                             await message.add_reaction(emoji)
                                         def check(reaction, user):
                                             return user == userx and str(reaction.emoji) in emojis
+                                        try:
                                         reaction, user = await self.bot.wait_for('reaction_add', timeout=120.0, check=check)
+                                        except asyncio.TimeoutError:
+                                            await ctx.author.send("Your opponent took too long to choose.")
+                                            await userx.send("You took too long to choose.")
+                                            return
 
                                         if str(reaction.emoji) == '\u2705':
                                             await userx.send("Your opponent is playing the Emperor.")
@@ -127,7 +138,14 @@ class Kaiji(commands.Cog):
                                             await message.add_reaction(emoji)
                                         def check(reaction, user):
                                             return user == userx and str(reaction.emoji) in emojis
+                                        
+                                        try:
                                         reaction, user = await self.bot.wait_for('reaction_add', timeout=120.0, check=check)
+                                        except asyncio.TimeoutError:
+                                            await ctx.author.send("Your opponent took too long to choose.")
+                                            await userx.send("You took too long to choose.")
+                                            return
+
 
                                         if str(reaction.emoji) == '\u2705':
                                             await userx.send("Your opponent is playing the Slave.")
