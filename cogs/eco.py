@@ -181,7 +181,7 @@ class Eco(commands.Cog):
             await ctx.send("Please enter a valid amount (0.01 minimum)")
         else:
             await sqlt.addbal(ctx.guild, member, float(am))
-            await sqlt.removebal(ctx.author, float(am))
+            await sqlt.removebal(ctx.author, member, float(am))
             await ctx.send(f"Sent <:mdct:843999368095989770> **{am}** MCT to {member}")
 
 def setup(bot):
