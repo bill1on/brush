@@ -318,7 +318,7 @@ class Kaiji(commands.Cog):
                         await currentpl.send('You chose '+ fine + "!" )
                         owncardbackmsg = await currentpl.send(cardbak)
 
-                        messageca.delete()
+                        await messageca.delete()
 
                         await nextpl.send("Your opponent chose his card, time to pick yours!")
                         cardbackmsg = await nextpl.send(cardbak)
@@ -350,7 +350,7 @@ class Kaiji(commands.Cog):
                             owncardbackreplymsg = await nextpl.send(cardbak)
                             await nextpl.send('You chose '+ sene + "!" )
 
-                            messageca.delete()
+                            await messageca.delete()
 
                             cardbackreplymsg = await currentpl.send(cardbak)
                             await currentpl.send("Your opponent chose his card.")
@@ -397,7 +397,7 @@ class Kaiji(commands.Cog):
 
                         else:
 
-                            messageca.delete()
+                            await messageca.delete()
 
                             await currentpl.send('You chose Citizen!')
 
@@ -408,7 +408,7 @@ class Kaiji(commands.Cog):
 
                     else:
 
-                        messageca.delete()
+                        await messageca.delete()
 
                         await currentpl.send('You chose Citizen!')
 
