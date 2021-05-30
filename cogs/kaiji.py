@@ -103,8 +103,25 @@ class Kaiji(commands.Cog):
                                 brurr = 1
                                 if str(reaction.emoji) == '\u2705':
                                     await userx.send('Duel accepted!')
+
+                                    await sqlt.removebal(ctx.guild, userx, float(betf))
+                                    await sqlt.removebal(ctx.guild, ctx.author, float(betf))
+
+                                    if betf > balf or betf > balof:
+                                        await ctx.author.send("One of you spent money. Ending the duel.")
+                                        await ctx.userx("One of you spent money. Ending the duel.")
+                                        loop.stop()
+                                    
+                                    await sqlt.removebal(ctx.guild, ctx.author, betf)
+                                    await sqlt.removebal(ctx.guild, userx, betf)
+
+                                    await userx.send(str(betf) + ' MTC has been temporarily removed from your balance for this duel.')
+
                                     await userx.send(ctx.author.name + ' is picking his preference between Emperor and Slave.')
                                     await ctx.author.send( str(user.name) + ' has accepted your duel request!')
+
+                                    await ctx.author.send(str(betf) + ' MTC has been temporarily removed from your balance for this duel.')
+
                                     messageca = await ctx.author.send("React with :yellow_square: if you want to play Emperor or with :red_square: if you want to play Slave.")
                                     emojisca = ['\U0001F7E8', '\U0001F7E5']
                                     for emoji in emojisca:
@@ -596,8 +613,8 @@ class Kaiji(commands.Cog):
                             await revmsgn.delete()
                             await asyncio.sleep(0.3)
 
-                            await owncardbackmsg.edit(content=fi1)
-                            await cardbackmsg.edit(content=fi1)
+                            await owncardbackmsg.edit(content=citc)
+                            await cardbackmsg.edit(content=citc)
                             await owncardbackreplymsg.edit(content=citc)
                             await cardbackreplymsg.edit(content=citc)
                             await asyncio.sleep(0.3)
@@ -648,11 +665,15 @@ class Kaiji(commands.Cog):
                 
                     await slave.send("The game has ended! You won " + str(betf) + " MCT")
                     await king.send("The game has ended! " + str(ctx.author.name) + " has won " + str(betf) + " MCT. Too bad...")
+
+                    await sqlt.addbal(ctx.guild, ctx.author, betf)
                 
                 elif king == userx:
                     
                     await slave.send("The game has ended! You won " + str(betf) + " MCT")
                     await king.send("The game has ended! " + str(userx.name) + " has won " + str(betf) + " MCT. Too bad...")
+
+                    await sqlt.addbal(ctx.guild, userx, betf)
 
 
 
