@@ -272,112 +272,134 @@ class Kaiji(commands.Cog):
                 cupd = 0
                 nexd = 0
 
-                if turns == 1:
-                    cupd = fi5
-                    nexd = se5
-                elif turns == 2:
-                    cupd = fi4
-                    nexd = se4
-                elif turns == 3:
-                    cupd = fi3
-                    nexd = se3
-                elif turns == 4:
-                    cupd = fi2
-                    nexd = se2
-                elif turns == 5:
-                    cupd = fi1
-                    nexd = se1
-                    
+                while (turns < 5):
 
-                currentpl = firstp
-                nextpl  = secondp
+                    if turns == 1:
+                        cupd = fi5
+                        nexd = se5
+                    elif turns == 2:
+                        cupd = fi4
+                        nexd = se4
+                    elif turns == 3:
+                        cupd = fi3
+                        nexd = se3
+                    elif turns == 4:
+                        cupd = fi2
+                        nexd = se2
+                    elif turns == 5:
+                        cupd = fi1
+                        nexd = se1
+                        
 
-                await nextpl.send("Your opponent is picking a card.")
+                    currentpl = firstp
+                    nextpl  = secondp
 
-                messageca = await currentpl.send(cupd)
+                    await nextpl.send("Your opponent is picking a card.")
 
-                emojisca = [bluemo, fimo]
-                for emoji in emojisca:
-                    await messageca.add_reaction(emoji)
-                def check(reaction, user):
-                    return user == currentpl and str(reaction.emoji) in emojisca
-                try:
-                    reaction, user = await self.bot.wait_for('reaction_add', timeout=120.0, check=check)
-                except asyncio.TimeoutError:
-                    await nextpl.send("Your opponent took too long to choose. You won " + betf + " MCT!")
-                    await currentpl.send("You took too long to choose. You lost " + betf + " MCT.")
+                    messageca = await currentpl.send(cupd)
 
-                    await sqlt.addbal(ctx.guild, nextpl, float(betf))
-                    await sqlt.removebal(ctx.guild, currentpl, float(betf))
-
-                    return
-
-                if str(reaction.emoji) == fimo:
-                    await currentpl.send('You chose '+ fine + "!" )
-                    owncardbackmsg = await currentpl.send(cardbak)
-
-                    await nextpl.send("Your opponent chose his card, time to pick yours!")
-                    cardbackmsg = await nextpl.send(cardbak)
-
-                    
-
-
-                    
-                    messageca = await nextpl.send(nexd)
-
-                    emojisca = [bluemo, semo]
+                    emojisca = [bluemo, fimo]
                     for emoji in emojisca:
                         await messageca.add_reaction(emoji)
                     def check(reaction, user):
-                        return user == nextpl and str(reaction.emoji) in emojisca
+                        return user == currentpl and str(reaction.emoji) in emojisca
                     try:
                         reaction, user = await self.bot.wait_for('reaction_add', timeout=120.0, check=check)
                     except asyncio.TimeoutError:
-                        await currentpl.send("Your opponent took too long to choose. You won " + betf + " MCT!")
-                        await nextpl.send("You took too long to choose. You lost " + betf + " MCT.")
+                        await nextpl.send("Your opponent took too long to choose. You won " + betf + " MCT!")
+                        await currentpl.send("You took too long to choose. You lost " + betf + " MCT.")
 
-                        await sqlt.addbal(ctx.guild, currentpl, float(betf))
-                        await sqlt.removebal(ctx.guild, nextpl, float(betf))
+                        await sqlt.addbal(ctx.guild, nextpl, float(betf))
+                        await sqlt.removebal(ctx.guild, currentpl, float(betf))
 
                         return
 
-                    if str(reaction.emoji) == semo:
-                        await nextpl.send('You chose '+ sene + "!" )
-                        owncardbackreplymsg = await nextpl.send(cardbak)
+                    if str(reaction.emoji) == fimo:
+                        await currentpl.send('You chose '+ fine + "!" )
+                        owncardbackmsg = await currentpl.send(cardbak)
 
-                        await currentpl.send("Your opponent chose his card.")
-                        cardbackreplymsg = await currentpl.send(cardbak)
+                        messageca.delete()
 
-                        await currentpl.send("Time to reveal the cards...")
-                        await nextpl.send("Time to reveal the cards...")
-                        await asyncio.sleep(0.4)
-                        await currentpl.send("3")
-                        await nextpl.send("3")
-                        await asyncio.sleep(0.3)
-                        await currentpl.send("2")
-                        await nextpl.send("2")
-                        await asyncio.sleep(0.3)
-                        await currentpl.send("1")
-                        await nextpl.send("1")
-                        await asyncio.sleep(0.3)
-
-                        await owncardbackmsg.edit(content=fi1)
-                        await cardbackmsg.edit(content=fi1)
-                        await owncardbackreplymsg.edit(content=se1)
-                        await cardbackreplymsg.edit(content=se1)
-
-                        slavepoints = int(slavepoints) + 1
-
-                        await king.send("The slave defeats the Emperor! You lost this round!")
-                        await king.send("Your opponent just won a point!")
-
-                        await slave.send("The slave defeats the Emperor! You won this round!")
-                        await slave.send("You just won a point!")
-
-                        await slave.send("Score: " + slavepoints + "/2 for slave  " + kingpoints + "/6 for Emperor")
+                        await nextpl.send("Your opponent chose his card, time to pick yours!")
+                        cardbackmsg = await nextpl.send(cardbak)
 
                         
-                    
+
+
+                        
+                        messageca = await nextpl.send(nexd)
+
+                        emojisca = [bluemo, semo]
+                        for emoji in emojisca:
+                            await messageca.add_reaction(emoji)
+                        def check(reaction, user):
+                            return user == nextpl and str(reaction.emoji) in emojisca
+                        try:
+                            reaction, user = await self.bot.wait_for('reaction_add', timeout=120.0, check=check)
+                        except asyncio.TimeoutError:
+                            await currentpl.send("Your opponent took too long to choose. You won " + betf + " MCT!")
+                            await nextpl.send("You took too long to choose. You lost " + betf + " MCT.")
+
+                            await sqlt.addbal(ctx.guild, currentpl, float(betf))
+                            await sqlt.removebal(ctx.guild, nextpl, float(betf))
+
+                            return
+
+                        if str(reaction.emoji) == semo:
+                            
+                            owncardbackreplymsg = await nextpl.send(cardbak)
+                            await nextpl.send('You chose '+ sene + "!" )
+
+                            messageca.delete()
+
+                            cardbackreplymsg = await currentpl.send(cardbak)
+                            await currentpl.send("Your opponent chose his card.")
+
+                            revmsgc = await currentpl.send("Time to reveal the cards...")
+                            revmsgn = await nextpl.send("Time to reveal the cards...")
+                            await asyncio.sleep(0.4)
+                            await revmsgc.edit("Time to reveal the cards...3")
+                            await revmsgn.edit("Time to reveal the cards...3")
+                            await asyncio.sleep(0.3)
+                            await revmsgc.edit("Time to reveal the cards...3...2")
+                            await revmsgn.edit("Time to reveal the cards...3...2")
+                            await asyncio.sleep(0.3)
+                            await revmsgc.edit("Time to reveal the cards...3...2...1")
+                            await revmsgn.edit("Time to reveal the cards...3...2...1")
+                            await asyncio.sleep(0.3)
+                            await revmsgc.delete()
+                            await revmsgn.delete()
+                            await asyncio.sleep(0.3)
+
+                            await owncardbackmsg.edit(content=fi1)
+                            await cardbackmsg.edit(content=fi1)
+                            await owncardbackreplymsg.edit(content=se1)
+                            await cardbackreplymsg.edit(content=se1)
+                            await asyncio.sleep(0.3)
+
+                            slavepoints = int(slavepoints) + 1
+
+                            await king.send("The slave defeats the Emperor! You lost this round!")
+                            await king.send("Your opponent just won a point!")
+
+                            await slave.send("The slave defeats the Emperor! You won this round!")
+                            await slave.send("You just won a point!")
+
+                            await slave.send("Score: " + slavepoints + "/2 for slave  " + kingpoints + "/6 for Emperor")
+
+                            
+                        
+
+                            
+
+
+                            
+
+                        else:
+
+                            messageca.delete()
+
+                            await currentpl.send('You chose Citizen!')
 
                         
 
@@ -385,15 +407,10 @@ class Kaiji(commands.Cog):
                         
 
                     else:
+
+                        messageca.delete()
+
                         await currentpl.send('You chose Citizen!')
-
-                    
-
-
-                    
-
-                else:
-                    await currentpl.send('You chose Citizen!')
 
 
 
