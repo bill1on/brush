@@ -130,8 +130,9 @@ class Kaiji(commands.Cog):
                                             return
 
                                         if str(reaction.emoji) == '\u2705':
-                                            await userx.send("Your opponent is playing the Emperor.")
+                                            await userx.send("Your opponent is playing the Emperor. You are playing Slave.")
                                             await ctx.author.send('Your opponent supports your preference, you are playing Emperor!')
+                                            plyr1 = 1
                                         else:
                                             await userx.send("The roles are being randomized...")
                                             await ctx.author.send("Your opponent contested your choice. The roles are being randomized...")
@@ -158,8 +159,9 @@ class Kaiji(commands.Cog):
 
 
                                         if str(reaction.emoji) == '\u2705':
-                                            await userx.send("Your opponent is playing the Slave.")
+                                            await userx.send("Your opponent is playing the Slave. You are playing Emperor.")
                                             await ctx.author.send('Your opponent supports your preference, you are playing Slave!')
+                                            plyr1 = 2
                                         else:
                                             await userx.send("The roles are being randomized...")
                                             await ctx.author.send("Your opponent contested your choice. The roles are being randomized...")
@@ -218,11 +220,13 @@ class Kaiji(commands.Cog):
             slv2 = "https://media.discordapp.net/attachments/847576142290354236/847578457561890836/slave2.jpg"
             slv1 = "https://media.discordapp.net/attachments/847576142290354236/847578433584234586/slave1.jpg"
 
+            cardbak = "https://media.discordapp.net/attachments/847576142290354236/848337794631598090/cardbak.jpg"
+
 
             while (kingpoints < 6 and slavepoints < 2):
-                num = int(roundz)
+                weeznum = int(roundz)
 
-                if (num % 2) == 0:
+                if (weeznum % 2) == 0:
 
                     firstp = slave
                     secondp = king
@@ -265,11 +269,32 @@ class Kaiji(commands.Cog):
                     sene = "Slave"
                 
                 turns = 1
+                cupd = 0
+                nexd = 0
+
+                if turns = 1:
+                    cupd = fi5
+                    nexd = se5
+                elif turns = 2:
+                    cupd = fi4
+                    nexd = se4
+                elif turns = 3:
+                    cupd = fi3
+                    nexd = se3
+                elif turns = 4:
+                    cupd = fi2
+                    nexd = se2
+                elif turns = 5:
+                    cupd = fi1
+                    nexd = se1
+                    
 
                 currentpl = firstp
                 nextpl  = secondp
 
-                messageca = await currentpl.send(fi5)
+                await nextpl.send("Your opponent is picking a card.")
+
+                messageca = await currentpl.send(cupd)
 
                 emojisca = [bluemo, fimo]
                 for emoji in emojisca:
@@ -279,12 +304,76 @@ class Kaiji(commands.Cog):
                 try:
                     reaction, user = await self.bot.wait_for('reaction_add', timeout=120.0, check=check)
                 except asyncio.TimeoutError:
-                    await nextpl.send("Your opponent took too long to choose. You won " + betf + "MCT!")
-                    await currentpl.send("You took too long to choose. You lost " + betf + "MCT.")
+                    await nextpl.send("Your opponent took too long to choose. You won " + betf + " MCT!")
+                    await currentpl.send("You took too long to choose. You lost " + betf + " MCT.")
                     return
 
                 if str(reaction.emoji) == fimo:
-                    await currentpl.send('You chose Emperor!')
+                    await currentpl.send('You chose '+ fine + "!" )
+                    owncardbackmsg = await currentpl.send(cardbak)
+
+                    await nextpl.send("Your opponent chose his card, time to pick yours!")
+                    cardbackmsg = await nextpl.send(cardbak)
+
+                    
+
+
+                    
+                    messageca = await currentpl.send(nexd)
+
+                    emojisca = [bluemo, semo]
+                    for emoji in emojisca:
+                        await messageca.add_reaction(emoji)
+                    def check(reaction, user):
+                        return user == nextpl and str(reaction.emoji) in emojisca
+                    try:
+                        reaction, user = await self.bot.wait_for('reaction_add', timeout=120.0, check=check)
+                    except asyncio.TimeoutError:
+                        await currentpl.send("Your opponent took too long to choose. You won " + betf + " MCT!")
+                        await nextpl.send("You took too long to choose. You lost " + betf + " MCT.")
+                        return
+
+                    if str(reaction.emoji) == semo:
+                        await nextpl.send('You chose '+ sene + "!" )
+                        owncardbackreplymsg = await nextpl.send(cardbak)
+
+                        await currentpl.send("Your opponent chose his card.)
+                        cardbackreplymsg = await currentpl.send(cardbak)
+
+                        await currentpl.send("Time to reveal the cards...")
+                        await nextpl.send("Time to reveal the cards...")
+                        await asyncio.sleep(0.4)
+                        await currentpl.send("3")
+                        await nextpl.send("3")
+                        await asyncio.sleep(0.3)
+                        await currentpl.send("2")
+                        await nextpl.send("2")
+                        await asyncio.sleep(0.3)
+                        await currentpl.send("1")
+                        await nextpl.send("1")
+                        await asyncio.sleep(0.3)
+
+                        await owncardbackmsg.edit(content=fi1)
+                        await cardbackmsg.edit(content=fi1)
+                        await owncardbackreplymsg.edit(content=se1)
+                        await cardbackreplymsg.edit(content=se1)
+
+
+                    
+
+                        
+
+
+                        
+
+                    else:
+                        await currentpl.send('You chose Citizen!')
+
+                    
+
+
+                    
+
                 else:
                     await currentpl.send('You chose Citizen!')
 
