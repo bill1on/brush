@@ -272,19 +272,19 @@ class Kaiji(commands.Cog):
                 cupd = 0
                 nexd = 0
 
-                if turns = 1:
+                if turns == 1:
                     cupd = fi5
                     nexd = se5
-                elif turns = 2:
+                elif turns == 2:
                     cupd = fi4
                     nexd = se4
-                elif turns = 3:
+                elif turns == 3:
                     cupd = fi3
                     nexd = se3
-                elif turns = 4:
+                elif turns == 4:
                     cupd = fi2
                     nexd = se2
-                elif turns = 5:
+                elif turns == 5:
                     cupd = fi1
                     nexd = se1
                     
@@ -337,7 +337,7 @@ class Kaiji(commands.Cog):
                         await nextpl.send('You chose '+ sene + "!" )
                         owncardbackreplymsg = await nextpl.send(cardbak)
 
-                        await currentpl.send("Your opponent chose his card.)
+                        await currentpl.send("Your opponent chose his card.")
                         cardbackreplymsg = await currentpl.send(cardbak)
 
                         await currentpl.send("Time to reveal the cards...")
