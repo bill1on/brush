@@ -71,7 +71,11 @@ class Eco(commands.Cog):
         lead = await sqlt.lead(ctx.guild)
         for i in lead:
             if cnt == 1:
-                mbm = await ctx.guild.fetch_member(i[0])
+                try:
+                    mbm = await ctx.guild.fetch_member(i[0])
+                except discord.errors.NotFound:
+                    print('member not found, skipped lb')
+                    continue
                 role = ctx.guild.get_role(768927936535068692)
                 await mbm.add_roles(role)
                 ind = str(cnt) + 'st'
@@ -83,7 +87,11 @@ class Eco(commands.Cog):
                 ind = str(cnt) + 'rd'
             else:
                 ind = str(cnt) + 'th'
-            mbm = await ctx.guild.fetch_member(i[0])
+            try:
+                mbm = await ctx.guild.fetch_member(i[0])
+            except discord.errors.NotFound:
+                print('member not found, skipped lb')
+                continue
             bal = await sqlt.checkbal(ctx.guild, mbm)
             txt = txt + f'**{ind}**. {mbm.name}#{mbm.discriminator} | <:mdct:843999368095989770> **{round(bal, 2)}** MCT\n'
             cnt += 1
