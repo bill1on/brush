@@ -306,6 +306,10 @@ class Kaiji(commands.Cog):
                 except asyncio.TimeoutError:
                     await nextpl.send("Your opponent took too long to choose. You won " + betf + " MCT!")
                     await currentpl.send("You took too long to choose. You lost " + betf + " MCT.")
+
+                    await sqlt.addbal(ctx.guild, nextpl, float(betf))
+                    await sqlt.removebal(ctx.guild, currentpl, float(betf))
+
                     return
 
                 if str(reaction.emoji) == fimo:
@@ -319,7 +323,7 @@ class Kaiji(commands.Cog):
 
 
                     
-                    messageca = await currentpl.send(nexd)
+                    messageca = await nextpl.send(nexd)
 
                     emojisca = [bluemo, semo]
                     for emoji in emojisca:
@@ -331,6 +335,10 @@ class Kaiji(commands.Cog):
                     except asyncio.TimeoutError:
                         await currentpl.send("Your opponent took too long to choose. You won " + betf + " MCT!")
                         await nextpl.send("You took too long to choose. You lost " + betf + " MCT.")
+
+                        await sqlt.addbal(ctx.guild, currentpl, float(betf))
+                        await sqlt.removebal(ctx.guild, nextpl, float(betf))
+
                         return
 
                     if str(reaction.emoji) == semo:
@@ -358,7 +366,17 @@ class Kaiji(commands.Cog):
                         await owncardbackreplymsg.edit(content=se1)
                         await cardbackreplymsg.edit(content=se1)
 
+                        slavepoints = int(slavepoints) + 1
 
+                        await king.send("The slave defeats the Emperor! You lost this round!")
+                        await king.send("Your opponent just won a point!")
+
+                        await slave.send("The slave defeats the Emperor! You won this round!")
+                        await slave.send("You just won a point!")
+
+                        await slave.send("Score: " + slavepoints + "/2 for slave  " + kingpoints + "/6 for Emperor")
+
+                        
                     
 
                         
