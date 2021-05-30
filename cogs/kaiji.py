@@ -79,7 +79,11 @@ class Kaiji(commands.Cog):
                             if ctx.author==user:
                                 await ctx.send("You can't duel yourself!")
                             else:
-                                userx = user
+
+
+                                userx = user #ctx.author user
+                                
+                                
                                 await userx.send(ctx.author.name + " just challenged you to a duel of Ecard for " + str(betr) + " MCT.")
                                 await userx.send("You have 60 seconds to accept.")
                                 await userx.send("For more information about Ecard do `.erules`")
@@ -222,8 +226,10 @@ class Kaiji(commands.Cog):
 
             cardbak = "https://media.discordapp.net/attachments/847576142290354236/848337794631598090/cardbak.jpg"
 
+            citc = "https://media.discordapp.net/attachments/847576142290354236/847578421399650334/citizen.jpg"
 
-            while (kingpoints < 6 and slavepoints < 2):
+
+            while (int(kingpoints) < 6 and int(slavepoints) < 2):
                 weeznum = int(roundz)
 
                 if (weeznum % 2) == 0:
@@ -272,7 +278,7 @@ class Kaiji(commands.Cog):
                 cupd = 0
                 nexd = 0
 
-                while (turns < 5):
+                while (int(turns) < 5):
 
                     if turns == 1:
                         cupd = fi5
@@ -385,9 +391,10 @@ class Kaiji(commands.Cog):
                             await slave.send("The slave defeats the Emperor! You won this round!")
                             await slave.send("You just won a point!")
 
-                            await slave.send("Score: " + slavepoints + "/2 for slave  " + kingpoints + "/6 for Emperor")
+                            await slave.send("Score: " + str(slavepoints) + "/2 for Slave  " + str(kingpoints) + "/6 for Emperor")
+                            await king.send("Score: " + str(slavepoints) + "/2 for Slave  " + str(kingpoints) + "/6 for Emperor")
 
-                            
+                            turns = 100
                         
 
                             
@@ -397,20 +404,256 @@ class Kaiji(commands.Cog):
 
                         else:
 
+
+                            owncardbackreplymsg = await nextpl.send(cardbak)
+                            await nextpl.send("You chose Citizen!")
+
                             await messageca.delete()
 
-                            await currentpl.send('You chose Citizen!')
+                            cardbackreplymsg = await currentpl.send(cardbak)
+                            await currentpl.send("Your opponent chose his card.")
 
-                        
+                            revmsgc = await currentpl.send("Time to reveal the cards...")
+                            revmsgn = await nextpl.send("Time to reveal the cards...")
+                            await asyncio.sleep(0.4)
+                            await revmsgc.edit(content="Time to reveal the cards...3")
+                            await revmsgn.edit(content="Time to reveal the cards...3")
+                            await asyncio.sleep(0.3)
+                            await revmsgc.edit(content="Time to reveal the cards...3...2")
+                            await revmsgn.edit(content="Time to reveal the cards...3...2")
+                            await asyncio.sleep(0.3)
+                            await revmsgc.edit(content="Time to reveal the cards...3...2...1")
+                            await revmsgn.edit(content="Time to reveal the cards...3...2...1")
+                            await asyncio.sleep(0.3)
+                            await revmsgc.delete()
+                            await revmsgn.delete()
+                            await asyncio.sleep(0.3)
+
+                            await owncardbackmsg.edit(content=fi1)
+                            await cardbackmsg.edit(content=fi1)
+                            await owncardbackreplymsg.edit(content=citc)
+                            await cardbackreplymsg.edit(content=citc)
+                            await asyncio.sleep(0.3)
+
+                            if currentpl == king:
+
+                                kingpoints = int(kingpoints) + 1
+
+                                await king.send("The Emperor defeats the Citizen! You won this round!")
+                                await king.send("You just won a point!")
+
+                                await slave.send("The Emperor defeats the Citizen! You lost this round!")
+                                await slave.send("Your opponent just won a point!")
+
+                                await slave.send("Score: " + str(slavepoints) + "/2 for Slave  " + str(kingpoints) + "/6 for Emperor")
+                                await king.send("Score: " + str(slavepoints) + "/2 for Slave  " + str(kingpoints) + "/6 for Emperor")
+
+                                turns = 100
+                            
+                            elif currentpl == slave:
+                                
+                                kingpoints = int(kingpoints) + 1
+
+                                await king.send("The Citizen defeats the Slave! You won this round!")
+                                await king.send("You just won a point!")
+
+                                await slave.send("The Citizen defeats the Slave! You lost this round!")
+                                await slave.send("Your opponent just won a point!")
+
+                                await slave.send("Score: " + str(slavepoints) + "/2 for Slave  " + str(kingpoints) + "/6 for Emperor")
+                                await king.send("Score: " + str(slavepoints) + "/2 for Slave  " + str(kingpoints) + "/6 for Emperor")
+
+                                turns = 100
+                            
 
 
                         
 
                     else:
 
+                        await currentpl.send("You chose Citizen!")
+                        owncardbackmsg = await currentpl.send(cardbak)
+
                         await messageca.delete()
 
-                        await currentpl.send('You chose Citizen!')
+                        await nextpl.send("Your opponent chose his card, time to pick yours!")
+                        cardbackmsg = await nextpl.send(cardbak)
+
+                        
+
+
+                        
+                        messageca = await nextpl.send(nexd)
+
+                        emojisca = [bluemo, semo]
+                        for emoji in emojisca:
+                            await messageca.add_reaction(emoji)
+                        def check(reaction, user):
+                            return user == nextpl and str(reaction.emoji) in emojisca
+                        try:
+                            reaction, user = await self.bot.wait_for('reaction_add', timeout=120.0, check=check)
+                        except asyncio.TimeoutError:
+                            await currentpl.send("Your opponent took too long to choose. You won " + betf + " MCT!")
+                            await nextpl.send("You took too long to choose. You lost " + betf + " MCT.")
+
+                            await sqlt.addbal(ctx.guild, currentpl, float(betf))
+                            await sqlt.removebal(ctx.guild, nextpl, float(betf))
+
+                            return
+
+                        if str(reaction.emoji) == semo:
+                            
+                            owncardbackreplymsg = await nextpl.send(cardbak)
+                            await nextpl.send('You chose '+ sene + "!" )
+
+                            await messageca.delete()
+
+                            cardbackreplymsg = await currentpl.send(cardbak)
+                            await currentpl.send("Your opponent chose his card.")
+
+                            revmsgc = await currentpl.send("Time to reveal the cards...")
+                            revmsgn = await nextpl.send("Time to reveal the cards...")
+                            await asyncio.sleep(0.4)
+                            await revmsgc.edit(content="Time to reveal the cards...3")
+                            await revmsgn.edit(content="Time to reveal the cards...3")
+                            await asyncio.sleep(0.3)
+                            await revmsgc.edit(content="Time to reveal the cards...3...2")
+                            await revmsgn.edit(content="Time to reveal the cards...3...2")
+                            await asyncio.sleep(0.3)
+                            await revmsgc.edit(content="Time to reveal the cards...3...2...1")
+                            await revmsgn.edit(content="Time to reveal the cards...3...2...1")
+                            await asyncio.sleep(0.3)
+                            await revmsgc.delete()
+                            await revmsgn.delete()
+                            await asyncio.sleep(0.3)
+
+                            await owncardbackmsg.edit(content=citc)
+                            await cardbackmsg.edit(content=citc)
+                            await owncardbackreplymsg.edit(content=se1)
+                            await cardbackreplymsg.edit(content=se1)
+                            await asyncio.sleep(0.3)
+
+                            if currentpl == king:
+
+                                kingpoints = int(kingpoints) + 1
+
+                                await king.send("The Citizen defeats the Slave! You won this round!")
+                                await king.send("You just won a point!")
+
+                                await slave.send("The Citizen defeats the Slave! You lost this round!")
+                                await slave.send("Your opponent just won a point!")
+
+                                await slave.send("Score: " + str(slavepoints) + "/2 for Slave  " + str(kingpoints) + "/6 for Emperor")
+                                await king.send("Score: " + str(slavepoints) + "/2 for Slave  " + str(kingpoints) + "/6 for Emperor")
+
+                                turns = 100
+                            
+                            elif currentpl == slave:
+                                
+                                kingpoints = int(kingpoints) + 1
+
+                                await king.send("The Emperor defeats the Citizen! You won this round!")
+                                await king.send("You just won a point!")
+
+                                await slave.send("The Emperor defeats the Citizen! You lost this round!")
+                                await slave.send("Your opponent just won a point!")
+
+                                await slave.send("Score: " + str(slavepoints) + "/2 for Slave  " + str(kingpoints) + "/6 for Emperor")
+                                await king.send("Score: " + str(slavepoints) + "/2 for Slave  " + str(kingpoints) + "/6 for Emperor")
+
+                                turns = 100
+                        
+
+                            
+
+
+                            
+
+                        else:
+
+
+                            owncardbackreplymsg = await nextpl.send(cardbak)
+                            await nextpl.send("You chose Citizen!")
+
+                            await messageca.delete()
+
+                            cardbackreplymsg = await currentpl.send(cardbak)
+                            await currentpl.send("Your opponent chose his card.")
+
+                            revmsgc = await currentpl.send("Time to reveal the cards...")
+                            revmsgn = await nextpl.send("Time to reveal the cards...")
+                            await asyncio.sleep(0.4)
+                            await revmsgc.edit(content="Time to reveal the cards...3")
+                            await revmsgn.edit(content="Time to reveal the cards...3")
+                            await asyncio.sleep(0.3)
+                            await revmsgc.edit(content="Time to reveal the cards...3...2")
+                            await revmsgn.edit(content="Time to reveal the cards...3...2")
+                            await asyncio.sleep(0.3)
+                            await revmsgc.edit(content="Time to reveal the cards...3...2...1")
+                            await revmsgn.edit(content="Time to reveal the cards...3...2...1")
+                            await asyncio.sleep(0.3)
+                            await revmsgc.delete()
+                            await revmsgn.delete()
+                            await asyncio.sleep(0.3)
+
+                            await owncardbackmsg.edit(content=fi1)
+                            await cardbackmsg.edit(content=fi1)
+                            await owncardbackreplymsg.edit(content=citc)
+                            await cardbackreplymsg.edit(content=citc)
+                            await asyncio.sleep(0.3)
+
+
+
+                            await king.send("The citizens defeat each other! It's a tie!")
+                            await king.send("Moving on to the next turn...")
+
+                            await slave.send("The citizens defeat each other! It's a tie!")
+                            await slave.send("Moving on to the next turn...")
+
+                            await slave.send("Score: " + str(slavepoints) + "/2 for Slave  " + str(kingpoints) + "/6 for Emperor")
+                            await king.send("Score: " + str(slavepoints) + "/2 for Slave  " + str(kingpoints) + "/6 for Emperor")
+
+                            turns = int(turns) + 1
+                            
+
+                if turns == 5:
+
+                    await king.send("You only have an Emperor left! You lost!")
+                    await king.send("Your opponent just got a point!")
+
+                    await slave.send("Your opponent only has an Emperor left! You won!")
+                    await slave.send("You just got a point!")
+
+                    await slave.send("Score: " + str(slavepoints) + "/2 for Slave  " + str(kingpoints) + "/6 for Emperor")
+                    await king.send("Score: " + str(slavepoints) + "/2 for Slave  " + str(kingpoints) + "/6 for Emperor")
+            
+
+            if kingpoints == 6:
+
+                if king == ctx.author:
+                
+                    await king.send("The game has ended! You won " + str(betf) + " MCT")
+                    await slave.send("The game has ended! " + str(ctx.author.name) + " has won " + str(betf) + " MCT. Too bad...")
+                
+                elif king == userx:
+                    
+                    await king.send("The game has ended! You won " + str(betf) + " MCT")
+                    await slave.send("The game has ended! " + str(userx.name) + " has won " + str(betf) + " MCT. Too bad...")
+
+
+
+            elif slavepoints == 2:
+
+                if king == ctx.author:
+                
+                    await slave.send("The game has ended! You won " + str(betf) + " MCT")
+                    await king.send("The game has ended! " + str(ctx.author.name) + " has won " + str(betf) + " MCT. Too bad...")
+                
+                elif king == userx:
+                    
+                    await slave.send("The game has ended! You won " + str(betf) + " MCT")
+                    await king.send("The game has ended! " + str(userx.name) + " has won " + str(betf) + " MCT. Too bad...")
+
 
 
 
