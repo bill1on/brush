@@ -635,6 +635,8 @@ class Kaiji(commands.Cog):
 
                 if turns == 5:
 
+                    slavepoints = int(slavepoints) + 1
+
                     await king.send("You only have an Emperor left! You lost!")
                     await king.send("Your opponent just got a point!")
 
@@ -651,24 +653,28 @@ class Kaiji(commands.Cog):
                 
                     await king.send("The game has ended! You won " + str(betf) + " MCT")
                     await slave.send("The game has ended! " + str(ctx.author.name) + " has won " + str(betf) + " MCT. Too bad...")
+
+                    await sqlt.addbal(ctx.guild, ctx.author, betf)
                 
                 elif king == userx:
                     
                     await king.send("The game has ended! You won " + str(betf) + " MCT")
                     await slave.send("The game has ended! " + str(userx.name) + " has won " + str(betf) + " MCT. Too bad...")
 
+                    await sqlt.addbal(ctx.guild, userx, betf)
+
 
 
             elif slavepoints == 2:
 
-                if king == ctx.author:
+                if slave == ctx.author:
                 
                     await slave.send("The game has ended! You won " + str(betf) + " MCT")
                     await king.send("The game has ended! " + str(ctx.author.name) + " has won " + str(betf) + " MCT. Too bad...")
 
                     await sqlt.addbal(ctx.guild, ctx.author, betf)
                 
-                elif king == userx:
+                elif slave == userx:
                     
                     await slave.send("The game has ended! You won " + str(betf) + " MCT")
                     await king.send("The game has ended! " + str(userx.name) + " has won " + str(betf) + " MCT. Too bad...")
