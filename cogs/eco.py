@@ -177,7 +177,7 @@ class Eco(commands.Cog):
     @commands.guild_only()
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def tip(self, ctx, member:discord.Member, am):
-        if int(am) < 0.01:
+        if float(am) < 0.01:
             await ctx.send("Please enter a valid amount (0.01 minimum)")
         else:
             await sqlt.addbal(ctx.guild, member, float(am))
