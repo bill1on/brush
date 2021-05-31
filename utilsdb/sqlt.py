@@ -11,8 +11,8 @@ def maindb(guildID):
                 guildID int,
                 balance float,
                 brushedt int,
-                momentjoined int,
-                rolelist TEXT
+                rolelist TEXT,
+                momentjoined int
             )"""
     return sqldb
 
