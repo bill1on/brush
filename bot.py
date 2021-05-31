@@ -6,7 +6,7 @@ intents = discord.Intents.all()
 client = commands.Bot(command_prefix= '.', intents = intents)
 extensions = ['cogs.tooth', 'cogs.eco', 'cogs.crypto', 'cogs.kaiji', 'cogs.gamble']
 
-ENABLE_CRYPTO = True
+ENABLE_CRYPTO = False
 
 @client.event
 async def on_ready():
