@@ -3,6 +3,7 @@ from discord.ext import commands, tasks
 from utilsdb import sqlt
 from datetime import datetime, timedelta
 import asyncio
+import time
 
 class Tooth(commands.Cog):
     def __init__(self, bot):

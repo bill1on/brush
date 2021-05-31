@@ -176,13 +176,21 @@ class Eco(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @commands.cooldown(1, 5, commands.BucketType.user)
-    async def tip(self, ctx, member:discord.Member, am):
-        if float(am) < 0.01:
-            await ctx.send("Please enter a valid amount (0.01 minimum)")
+    async def tip(self, ctx, member:discord.Member, amo):
+        
+        bruhtime = await sqlt.checktimej(ctx.guild, ctx.author)
+        difftime = int(time.time()) - int(bruhtime)
+        if int(difftime) > 604800: 
+
+            if float(am) < 0.01:
+                await ctx.send("Please enter a valid amount (0.01 minimum)")
+            else:
+                await sqlt.addbal(ctx.guild, member, float(am))
+                await sqlt.removebal(ctx.guild, ctx.author, float(am))
+                await ctx.send(f"Sent <:mdct:843999368095989770> **{am}** MCT to {member}")
+        
         else:
-            await sqlt.addbal(ctx.guild, member, float(am))
-            await sqlt.removebal(ctx.guild, ctx.author, float(am))
-            await ctx.send(f"Sent <:mdct:843999368095989770> **{am}** MCT to {member}")
+            await ctx.send("You need to wait a week after joining before being able to tip!")
 
 def setup(bot):
     bot.add_cog(Eco(bot))

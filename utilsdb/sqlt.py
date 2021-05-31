@@ -3,6 +3,7 @@ from discord.ext import commands, tasks
 from datetime import datetime, timedelta
 from cogs import tooth
 from cogs import crypto
+import time
 
 def maindb(guildID):
     sqldb = f"""CREATE TABLE IF NOT EXISTS MAIN{str(guildID)} (
@@ -10,6 +11,7 @@ def maindb(guildID):
                 guildID int,
                 balance float,
                 brushedt int,
+                momentjoined int,
                 rolelist TEXT
             )"""
     return sqldb
@@ -106,7 +108,7 @@ async def addt(guild, member): #adds the person to the database
     async with aiosqlite.connect('db.db') as db:
         await db.execute(maindb(guild.id))
         async with db.cursor() as crs:
-            await crs.execute(f"""INSERT INTO MAIN{guild.id} (guildID, memberID, balance, brushedt) VALUES (:guildID, :memberID, :balance, :brushedval)""", {'guildID': guild.id, 'memberID': member.id, 'balance': 0, 'brushedval': False})
+            await crs.execute(f"""INSERT INTO MAIN{guild.id} (guildID, memberID, balance, brushedt, momentjoined) VALUES (:guildID, :memberID, :balance, :brushedval, :momentjoined)""", {'guildID': guild.id, 'memberID': member.id, 'balance': 0, 'brushedval': False, 'momentjoined': time.time() })
             await db.commit() #D
 
 async def roleadd(guild, member, rlist): #adds the list of roles to the database that the user currently has
@@ -155,6 +157,17 @@ async def checkbal(guild, member):
         await db.execute(maindb(guild.id))
         async with db.cursor() as crs:
             await crs.execute(f"""SELECT memberID, balance FROM MAIN{guild.id}""")
+            vals = await crs.fetchall()  
+            for i in vals:
+                if member.id == i[0]:
+                    return i[1]
+        return False #D
+
+async def checktimej(guild, member):
+    async with aiosqlite.connect('db.db') as db:
+        await db.execute(maindb(guild.id))
+        async with db.cursor() as crs:
+            await crs.execute(f"""SELECT memberID, momentjoined FROM MAIN{guild.id}""")
             vals = await crs.fetchall()  
             for i in vals:
                 if member.id == i[0]:
