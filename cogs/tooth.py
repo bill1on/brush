@@ -19,7 +19,6 @@ class Tooth(commands.Cog):
 
     @tasks.loop(hours=24) # A loop that loops every 24 hours
     async def lockt(self, user, server):
-        await sqlt.addbank(server, 5)
         if await sqlt.checkb(server, user): # checkb checks whether a person has brushed their teeth
             await sqlt.makef(server, user) #if they have, i will turn to false and a new day will start
         else:

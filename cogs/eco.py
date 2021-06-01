@@ -4,6 +4,7 @@ from discord.ext import commands, tasks
 from utilsdb import sqlt
 from datetime import datetime
 import aiohttp
+import time
 
 class Eco(commands.Cog):
     def __init__(self, bot):
@@ -76,8 +77,6 @@ class Eco(commands.Cog):
                 except discord.errors.NotFound:
                     print('member not found, skipped lb')
                     continue
-                role = ctx.guild.get_role(768927936535068692)
-                await mbm.add_roles(role)
                 ind = str(cnt) + 'st'
             elif str(cnt).endswith('1'):
                 ind = str(cnt) + 'st'
@@ -176,8 +175,7 @@ class Eco(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @commands.cooldown(1, 5, commands.BucketType.user)
-    async def tip(self, ctx, member:discord.Member, amo):
-        
+    async def tip(self, ctx, member:discord.Member, am):
         bruhtime = await sqlt.checktimej(ctx.guild, ctx.author)
         difftime = int(time.time()) - int(bruhtime)
         if int(difftime) > 604800: 
