@@ -28,8 +28,11 @@ class Tooth(commands.Cog):
             for i in roles:
                 if not i.position == 0:
                     rolelist = rolelist + str(i.id) +  ', '  # gets id for each role and makes it into a string
-            if not await sqlt.checkrole(server, user):
+            try:
                 await sqlt.roleadd(server, user, rolelist) # adds them to the database
+            except:
+                print("Roleadd err line 33 tooth.py")
+                return
             for role in roles:
                 if not role.position == 0:
                     await user.remove_roles(role)

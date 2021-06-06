@@ -136,8 +136,10 @@ async def checkrole(guild, member): # checks if the user is in the roles databas
             vals = await crs.fetchall()
             for i in vals:
                 if member.id == i[0] and guild.id == i[1]:
+                    print('True')
                     return True
                 else:
+                    print('False')
                     return False #D
 
 async def deleterole(guild, member): # deletes data from user from database
